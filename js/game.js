@@ -15,12 +15,46 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
 
+  function compactImageForSave(image) {
+    if (!image || typeof image !== 'string') return '';
+    if (image.startsWith('data:')) return '';
+    return image;
+  }
+
+  function compactHistoryEntry(entry) {
+    if (!entry || typeof entry !== 'object') return entry;
+    const image = compactImageForSave(entry.image);
+    const { image: _drop, ...rest } = entry;
+    return { ...rest, image };
+  }
+
   function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      history: state.history,
+    const payload = JSON.stringify({
+      history: state.history.map(compactHistoryEntry),
       soundOn: state.soundOn,
       resetUnlocked: state.resetUnlocked,
-    }));
+    });
+
+    try {
+      localStorage.setItem(STORAGE_KEY, payload);
+      return;
+    } catch (err) {
+      console.warn('save failed', err);
+    }
+
+    while (state.history.length > 20) {
+      state.history.pop();
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          history: state.history.map(compactHistoryEntry),
+          soundOn: state.soundOn,
+          resetUnlocked: state.resetUnlocked,
+        }));
+        return;
+      } catch {
+        /* keep trimming */
+      }
+    }
   }
 
   function load() {
@@ -33,7 +67,7 @@
           if (h.rarity === 'MISS') return true;
           const id = String(h.id);
           return id.startsWith('custom-') || id.startsWith('seola-');
-        })
+        }).map(compactHistoryEntry)
         : [];
       state.soundOn = data.soundOn ?? true;
       state.resetUnlocked = data.resetUnlocked ?? false;
@@ -86,7 +120,7 @@
   }
 
   function snapshotCard(card, donor = '') {
-    return {
+    return compactHistoryEntry({
       uid: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       id: card.id,
       name: card.name,
@@ -94,7 +128,8 @@
       type: card.type,
       hp: card.hp,
       stage: card.stage,
-      image: card.image,
+      image: compactImageForSave(card.image),
+      imageId: card.imageId || undefined,
       moves: card.moves,
       holo: card.holo,
       lord: card.lord,
@@ -103,6 +138,30 @@
       retreat: card.retreat,
       pulledAt: Date.now(),
       donor: donor || '',
+    });
+  }
+
+  async function resolveHistoryImage(entry) {
+    if (entry.image) return entry.image;
+    if (entry.imageId) {
+      const resolved = await resolveCardImage({ imageId: entry.imageId, image: '' });
+      if (resolved) return resolved;
+    }
+    const poolCard = state.resolvedCards.find((c) => c.id === entry.id);
+    return poolCard?.image || '';
+  }
+
+  async function normalizeCardForDisplay(card) {
+    const image = await resolveHistoryImage(card);
+    const poolCard = state.resolvedCards.find((c) => c.id === card.id);
+    return {
+      ...(poolCard || {}),
+      ...card,
+      name: card.name || poolCard?.name || '유설아',
+      type: card.type || poolCard?.type || '군',
+      hp: card.hp ?? poolCard?.hp ?? 70,
+      moves: card.moves?.length ? card.moves : poolCard?.moves,
+      image,
     };
   }
 
@@ -149,8 +208,13 @@
     back.className = 'card-back';
 
     const front = document.createElement('div');
-    front.className = `card-front sar-card rarity-${card.rarity}`;
-    front.innerHTML = buildCardFrontHTML(card, getCardCount());
+    front.className = `card-front sar-card rarity-${card.rarity || 'N'}`;
+    try {
+      front.innerHTML = buildCardFrontHTML(card, getCardCount());
+    } catch (err) {
+      console.error('buildCardFrontHTML', err, card);
+      front.innerHTML = buildCardFrontHTML({ ...MISS_CARD, name: card.name || '오류' }, getCardCount());
+    }
 
     const img = front.querySelector('.card-fullart img');
     if (img) {
@@ -202,10 +266,12 @@
         slot.appendChild(miss);
       } else {
         const img = document.createElement('img');
-        img.src = entry.image || '';
-        img.alt = entry.name;
+        img.alt = entry.name || '유설아';
         img.loading = 'lazy';
         slot.appendChild(img);
+        resolveHistoryImage(entry).then((src) => {
+          if (src) img.src = src;
+        }).catch(() => {});
 
         const gradeEl = document.createElement('div');
         gradeEl.className = `slot-grade rarity-${entry.rarity}`;
@@ -217,8 +283,10 @@
         ? `${entry.name} [${getRarityLine(entry.rarity)}] — ${entry.donor}`
         : `${entry.name} [${getRarityLine(entry.rarity)}]`;
 
-      slot.addEventListener('click', () => {
-        if (entry.rarity !== 'MISS') showSingleReveal(entry);
+      slot.addEventListener('click', async () => {
+        if (entry.rarity !== 'MISS') {
+          await showSingleReveal(await normalizeCardForDisplay(entry));
+        }
       });
       grid.appendChild(slot);
     });
@@ -270,7 +338,7 @@
     const pack = $('#pack');
 
     try {
-      pack.classList.add('shaking');
+      pack?.classList.add('shaking');
       playSound('pull');
       Sfx.packOpen();
       await sleep(600);
@@ -291,11 +359,12 @@
       if (hasKing) unlockReset();
 
       if (count === 1) {
-        const card = results[0];
+        const card = await normalizeCardForDisplay(results[0]);
         playSound(card.rarity === 'UR' ? 'ur' : card.rarity === 'SR' ? 'sr' : card.rarity === 'R' ? 'r' : card.rarity === 'MISS' ? 'miss' : 'n');
         await showSingleReveal(card, donorLabel, hasKing);
       } else {
-        await showMultiReveal(results, donorLabel, hasKing);
+        const normalized = await Promise.all(results.map((c) => normalizeCardForDisplay(c)));
+        await showMultiReveal(normalized, donorLabel, hasKing);
       }
 
       return true;

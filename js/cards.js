@@ -35,7 +35,7 @@ function isLordCard(card) {
 }
 
 function energyHtml(list) {
-  return list.map((e) => `<span class="energy-icon e-${e}"></span>`).join('');
+  return (list || []).map((e) => `<span class="energy-icon e-${e || 'bing'}"></span>`).join('');
 }
 
 function escHtml(s) {
@@ -59,16 +59,17 @@ function buildCardFrontHTML(card, totalCards) {
   const no = `${card.no || '?'}/${String(totalCards).padStart(3, '0')}`;
   const holo = card.holo || card.rarity === 'UR' || card.rarity === 'SR';
 
+  const safeName = String(card.name || '유설아');
   const nameHtml = lord
-    ? `${escHtml(card.name.replace(/\s*覇$/i, '').replace(/\s*★$/i, ''))}<em class="lord-mark">覇</em>`
-    : escHtml(card.name);
+    ? `${escHtml(safeName.replace(/\s*覇$/i, '').replace(/\s*★$/i, ''))}<em class="lord-mark">覇</em>`
+    : escHtml(safeName);
 
   const movesHtml = getMoves(card).map((m) => `
     <div class="move-block">
       <div class="move-head">
         <span class="move-cost">${energyHtml(m.energy)}</span>
-        <span class="move-name">${escHtml(m.name)}</span>
-        <span class="move-dmg">${m.damage}</span>
+        <span class="move-name">${escHtml(m.name || '전법')}</span>
+        <span class="move-dmg">${m.damage ?? 0}</span>
       </div>
       ${m.desc ? `<p class="move-desc">${escHtml(m.desc)}</p>` : ''}
     </div>`).join('');
@@ -81,7 +82,7 @@ function buildCardFrontHTML(card, totalCards) {
 
   return `
     <div class="card-fullart${holo ? ' holo-art' : ''}">
-      <img src="${escHtml(card.image)}" alt="${escHtml(card.name)}" loading="lazy" decoding="async">
+      <img src="${escHtml(card.image || '')}" alt="${escHtml(safeName)}" loading="lazy" decoding="async">
       <div class="card-vignette"></div>
     </div>
     <div class="card-ui">
@@ -126,7 +127,7 @@ const CARD_POOL = [
   },
   {
     id: 'seola-grand', name: '대장군 유설아', stage: '대장군', rarity: 'SR', type: '위', hp: 130, holo: true,
-    moves: [{ energy: ['chak', 'bing'], name: '츄르단 하트', desc: '대장군의 필살 전법.', damage: 70 }],
+    moves: [{ energy: ['wei', 'bing'], name: '츄르단 하트', desc: '대장군의 필살 전법.', damage: 70 }],
     image: 'https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png', no: '004', mark: '대장', retreat: 2,
   },
   {
