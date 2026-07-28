@@ -29,7 +29,11 @@
       if (!raw) return;
       const data = JSON.parse(raw);
       state.history = Array.isArray(data.history)
-        ? data.history.filter((h) => h.rarity === 'MISS' || String(h.id).startsWith('custom-'))
+        ? data.history.filter((h) => {
+          if (h.rarity === 'MISS') return true;
+          const id = String(h.id);
+          return id.startsWith('custom-') || id.startsWith('seola-');
+        })
         : [];
       state.soundOn = data.soundOn ?? true;
       state.resetUnlocked = data.resetUnlocked ?? false;
@@ -231,7 +235,7 @@
 
     await refreshCards();
     if (!state.resolvedCards.length) {
-      alert('⚙ 설정 → 카드 추가에서 카드를 먼저 등록해 주세요!');
+      alert('뽑기 카드를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.');
       return false;
     }
 

@@ -66,9 +66,14 @@ async function resolveCardImage(card) {
   return data ?? card.image;
 }
 
-async function getAllCardsResolved() {
+function getActiveCardPool() {
   const custom = loadCustomCards();
-  const resolved = await Promise.all(custom.map(async (c) => {
+  return custom.length > 0 ? custom : CARD_POOL;
+}
+
+async function getAllCardsResolved() {
+  const pool = getActiveCardPool();
+  const resolved = await Promise.all(pool.map(async (c) => {
     const image = await resolveCardImage(c);
     return { ...c, image: image ?? c.image };
   }));
@@ -76,11 +81,11 @@ async function getAllCardsResolved() {
 }
 
 function getAllCardIds() {
-  return loadCustomCards().map((c) => c.id);
+  return getActiveCardPool().map((c) => c.id);
 }
 
 function getCardCount() {
-  return loadCustomCards().length;
+  return getActiveCardPool().length;
 }
 
 async function addCustomCard(meta, file) {
