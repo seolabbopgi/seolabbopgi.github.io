@@ -7,7 +7,6 @@
   const state = {
     history: [],
     soundOn: true,
-    resetUnlocked: false,
     pulling: false,
     resolvedCards: [],
   };
@@ -32,7 +31,6 @@
     const payload = JSON.stringify({
       history: state.history.map(compactHistoryEntry),
       soundOn: state.soundOn,
-      resetUnlocked: state.resetUnlocked,
     });
 
     try {
@@ -48,7 +46,6 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           history: state.history.map(compactHistoryEntry),
           soundOn: state.soundOn,
-          resetUnlocked: state.resetUnlocked,
         }));
         return;
       } catch {
@@ -70,7 +67,6 @@
         }).map(compactHistoryEntry)
         : [];
       state.soundOn = data.soundOn ?? true;
-      state.resetUnlocked = data.resetUnlocked ?? false;
     } catch (_) { /* ignore */ }
   }
 
@@ -98,13 +94,6 @@
 
   function updateUI() {
     $('#btnSound').textContent = state.soundOn ? '🔊' : '🔇';
-    const resetBtn = $('#btnReset');
-    if (resetBtn) {
-      resetBtn.classList.toggle('disabled', !state.resetUnlocked);
-      resetBtn.title = state.resetUnlocked
-        ? '나온 내역 리셋'
-        : '왕 등급 당첨 후 리셋 가능';
-    }
     const countEl = $('#historyCount');
     if (countEl) {
       countEl.textContent = state.history.length
@@ -113,10 +102,23 @@
     }
   }
 
-  function unlockReset() {
-    state.resetUnlocked = true;
+  async function resetHistory() {
+    if (!state.history.length) {
+      alert('아직 리셋할 내역이 없어요.');
+      return;
+    }
+    if (!confirm('나온 내역을 모두 초기화할까요?')) return;
+    state.history = [];
     save();
     updateUI();
+    await renderHistory();
+    $('#resultStage').classList.add('hidden');
+    $('#cardReveal').classList.add('hidden');
+  }
+
+  function showResetBars() {
+    $('#revealResetBar')?.classList.remove('hidden');
+    $('#resultResetBar')?.classList.remove('hidden');
   }
 
   function snapshotCard(card, donor = '') {
@@ -174,26 +176,6 @@
     if (state.history.length > HISTORY_LIMIT) {
       state.history.length = HISTORY_LIMIT;
     }
-  }
-
-  async function resetHistory() {
-    if (!state.resetUnlocked) {
-      alert('👑 왕 등급이 나온 뒤에 리셋할 수 있어요.');
-      return;
-    }
-    if (!confirm('나온 내역을 모두 초기화할까요?')) return;
-    state.history = [];
-    state.resetUnlocked = false;
-    save();
-    updateUI();
-    await renderHistory();
-    $('#resultStage').classList.add('hidden');
-    $('#cardReveal').classList.add('hidden');
-  }
-
-  function showResetBars(hasKing) {
-    $('#revealResetBar')?.classList.toggle('hidden', !hasKing);
-    $('#resultResetBar')?.classList.toggle('hidden', !hasKing);
   }
 
   function createCardElement(card) {
@@ -357,16 +339,14 @@
       await renderHistory();
 
       const donorLabel = donor ? ` — ${donor}` : '';
-      const hasKing = results.some((c) => c.rarity === 'UR');
-      if (hasKing) unlockReset();
 
       if (count === 1) {
         const card = await normalizeCardForDisplay(results[0]);
         playSound(card.rarity === 'UR' ? 'ur' : card.rarity === 'SR' ? 'sr' : card.rarity === 'R' ? 'r' : card.rarity === 'MISS' ? 'miss' : 'n');
-        await showSingleReveal(card, donorLabel, hasKing);
+        await showSingleReveal(card, donorLabel);
       } else {
         const normalized = await Promise.all(results.map((c) => normalizeCardForDisplay(c)));
-        await showMultiReveal(normalized, donorLabel, hasKing);
+        await showMultiReveal(normalized, donorLabel);
       }
 
       return true;
@@ -391,7 +371,7 @@
     setTimeout(() => el.remove(), 600);
   }
 
-  function showSingleReveal(card, sub = '', hasKing = false) {
+  function showSingleReveal(card, sub = '') {
     return new Promise((resolve) => {
       const stage = $('#cardReveal');
       const wrap = $('#revealCard');
@@ -400,7 +380,7 @@
       if (card.rarity === 'UR') flashScreen('ur');
       else if (card.rarity === 'SR') flashScreen('sr');
       $('#revealSub').textContent = sub;
-      showResetBars(hasKing || card.rarity === 'UR');
+      showResetBars();
       stage.classList.remove('hidden');
       const close = (e) => {
         if (e?.target?.closest?.('.reset-bar button')) return;
@@ -412,7 +392,7 @@
     });
   }
 
-  function showMultiReveal(results, sub = '', hasKing = false) {
+  function showMultiReveal(results, sub = '') {
     return new Promise((resolve) => {
       const stage = $('#resultStage');
       const container = $('#resultCards');
@@ -433,7 +413,7 @@
       else if (srCount) title += ` ⚔ 대장군 ${srCount}장!`;
       $('#resultTitle').textContent = title;
       $('#resultSub').textContent = sub;
-      showResetBars(hasKing);
+      showResetBars();
 
       stage.classList.remove('hidden');
       const close = (e) => {
