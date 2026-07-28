@@ -24,10 +24,10 @@ const RARITY_REWARD = {
   MISS: '',
 };
 const CARD_SET_TOTAL = 100;
-const DECK_VERSION = 2;
+const DECK_VERSION = 3;
 
 /** 100장 덱 구성 (총 100장) */
-const DECK_COMPOSITION = { UR: 1, SR: 3, R: 8, BR: 15, N: 30, C: 15, MISS: 28 };
+const DECK_COMPOSITION = { UR: 1, SR: 2, R: 5, BR: 6, N: 20, C: 30, MISS: 36 };
 
 function shuffleDeck(deck) {
   const arr = deck.slice();
@@ -172,6 +172,6 @@ const MISS_CARD = {
   id: 'miss', name: '꽝', rarity: 'MISS', type: '—', hp: 0, image: null, no: '—',
 };
 
-const RARITY_DECK_INFO = { UR: '1장', SR: '3장', R: '8장', BR: '15장', N: '30장', C: '15장', MISS: '28장' };
+const RARITY_DECK_INFO = { UR: '1장', SR: '2장', R: '5장', BR: '6장', N: '20장', C: '30장', MISS: '36장' };
 const RARITY_LABELS = { UR: '왕', SR: '대장군', R: '장수', BR: '백인장', N: '병사', C: '시민', MISS: '—' };
 const RARITY_COLORS = { UR: '#FFD700', SR: '#7B1FA2', R: '#1565C0', BR: '#558B2F', N: '#B0BEC5', C: '#D7CCC8', MISS: '#78909C' };
