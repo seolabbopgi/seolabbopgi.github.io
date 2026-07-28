@@ -229,9 +229,8 @@ html, body {
 
 .btn.disabled,
 .pack.disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
-  pointer-events: none;
 }
 
 .gacha-buttons {

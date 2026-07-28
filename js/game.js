@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = 'yuseola-gacha-save';
   const HISTORY_LIMIT = 300;
-  const START_COINS = 1000;
+  const START_COINS = 2000;
   const PULL_COSTS = { 1: 100, 10: 950, 20: 1800 };
 
   const state = {
@@ -84,6 +84,7 @@
         : [];
       state.soundOn = data.soundOn ?? true;
       state.coins = Number.isFinite(data.coins) ? data.coins : START_COINS;
+      if (state.coins === 1000) state.coins = START_COINS;
       if (Array.isArray(data.deck) && data.deck.length) {
         state.deck = data.deck;
       } else {
