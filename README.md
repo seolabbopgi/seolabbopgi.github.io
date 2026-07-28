@@ -2,7 +2,7 @@
 
 SOOP 스트리머 **유설아♡** 테마의 포켓몬 TCG 스타일 카드 뽑기 게임.
 
-**사이트 주소:** `https://<GitHub아이디>.github.io/seolabbopgi/`
+**사이트 주소:** `https://wooeong.github.io/seolabbopgi/`
 
 ## 실행 방법
 
