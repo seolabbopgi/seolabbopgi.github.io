@@ -14,6 +14,7 @@ const RARITY_SYMBOL = { N: '●', BR: '◇', R: '◆', SR: '★', UR: '★★', 
 const RARITY_GRADE = { N: '병사', BR: '백인장', R: '장수', SR: '대장군', UR: '왕', MISS: '—' };
 const RARITY_MARK = { N: '', BR: '백', R: '장', SR: '대장', UR: '왕', MISS: '' };
 const STAGE_LABEL = { N: '병사', BR: '백인장', R: '장수', SR: '대장군', UR: '왕', MISS: '' };
+const CARD_SET_TOTAL = 200;
 
 function getStage(card) {
   return card.stage || STAGE_LABEL[card.rarity] || '병사';
@@ -44,35 +45,30 @@ function escHtml(s) {
   }[c]));
 }
 
-function buildCardFrontHTML(card, totalCards) {
+function getCardDescription(card) {
+  if (card.desc) return card.desc;
+  const descs = getMoves(card).map((m) => m.desc).filter(Boolean);
+  return descs.join(' ') || '';
+}
+
+function buildCardFrontHTML(card, totalCards = CARD_SET_TOTAL) {
   if (card.rarity === 'MISS') {
     return `<div class="card-miss-body"><span class="card-miss-text">꽝</span><p>다음 전투에!</p></div>`;
   }
 
   const stage = getStage(card);
   const typeE = TYPE_ENERGY[card.type] || 'bing';
-  const weakness = card.weakness || WEAKNESS_MAP[card.type] || 'wei';
-  const retreat = card.retreat ?? (card.rarity === 'UR' ? 1 : 2);
   const lord = isLordCard(card);
   const mark = card.mark || RARITY_MARK[card.rarity] || '';
   const artist = card.artist || 'SeolA';
   const no = `${card.no || '?'}/${String(totalCards).padStart(3, '0')}`;
   const holo = card.holo || card.rarity === 'UR' || card.rarity === 'SR';
+  const description = getCardDescription(card);
 
   const safeName = String(card.name || '유설아');
   const nameHtml = lord
     ? `${escHtml(safeName.replace(/\s*覇$/i, '').replace(/\s*★$/i, ''))}<em class="lord-mark">覇</em>`
     : escHtml(safeName);
-
-  const movesHtml = getMoves(card).map((m) => `
-    <div class="move-block">
-      <div class="move-head">
-        <span class="move-cost">${energyHtml(m.energy)}</span>
-        <span class="move-name">${escHtml(m.name || '전법')}</span>
-        <span class="move-dmg">${m.damage ?? 0}</span>
-      </div>
-      ${m.desc ? `<p class="move-desc">${escHtml(m.desc)}</p>` : ''}
-    </div>`).join('');
 
   const lordRule = lord ? `
     <div class="lord-rule-box">
@@ -94,11 +90,8 @@ function buildCardFrontHTML(card, totalCards) {
           <span class="type-icon e-${typeE}"></span>
         </span>
       </div>
-      <div class="card-moves">${movesHtml}</div>
-      <div class="stats-bar">
-        <span class="stat-item">천적 <span class="energy-icon e-${weakness} tiny"></span> ×2</span>
-        <span class="stat-item">내성 —</span>
-        <span class="stat-item">퇴각 ${energyHtml(Array(retreat).fill('bing'))}</span>
+      <div class="card-desc-box">
+        <p class="card-desc-text">${escHtml(description || '—')}</p>
       </div>
       <div class="card-meta">
         <span class="illus">Illus. ${escHtml(artist)}</span>

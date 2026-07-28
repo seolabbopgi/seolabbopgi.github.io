@@ -101,7 +101,7 @@ function getAllCardIds() {
 }
 
 function getCardCount() {
-  return getActiveCardPool().length;
+  return CARD_SET_TOTAL;
 }
 
 async function addCustomCard(meta, file) {
@@ -120,6 +120,7 @@ async function addCustomCard(meta, file) {
     rarity: meta.rarity || 'R',
     type: meta.type || '군',
     hp: +meta.hp || 100,
+    desc: meta.desc || '직접 추가한 카드',
     moves: [{
       energy: [TYPE_ENERGY[meta.type || '군'] || 'bing', 'bing'],
       name: meta.attack || '커스텀 전법',

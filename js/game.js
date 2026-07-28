@@ -130,6 +130,7 @@
       stage: card.stage,
       image: compactImageForSave(card.image),
       imageId: card.imageId || undefined,
+      desc: getCardDescription(card) || undefined,
       moves: card.moves,
       holo: card.holo,
       lord: card.lord,
@@ -161,6 +162,7 @@
       type: card.type || poolCard?.type || '군',
       hp: card.hp ?? poolCard?.hp ?? 70,
       moves: card.moves?.length ? card.moves : poolCard?.moves,
+      desc: card.desc || poolCard?.desc || getCardDescription(card),
       image,
     };
   }
@@ -210,10 +212,10 @@
     const front = document.createElement('div');
     front.className = `card-front sar-card rarity-${card.rarity || 'N'}`;
     try {
-      front.innerHTML = buildCardFrontHTML(card, getCardCount());
+      front.innerHTML = buildCardFrontHTML(card);
     } catch (err) {
       console.error('buildCardFrontHTML', err, card);
-      front.innerHTML = buildCardFrontHTML({ ...MISS_CARD, name: card.name || '오류' }, getCardCount());
+      front.innerHTML = buildCardFrontHTML({ ...MISS_CARD, name: card.name || '오류' });
     }
 
     const img = front.querySelector('.card-fullart img');
