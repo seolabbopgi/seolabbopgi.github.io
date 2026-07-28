@@ -40,8 +40,26 @@
     } catch (_) { /* ignore */ }
   }
 
+  function fallbackCardPool() {
+    return CARD_POOL.map((c) => ({ ...c }));
+  }
+
   async function refreshCards() {
-    state.resolvedCards = await getAllCardsResolved();
+    try {
+      const resolved = await getAllCardsResolved();
+      state.resolvedCards = resolved.length ? resolved : fallbackCardPool();
+    } catch {
+      state.resolvedCards = fallbackCardPool();
+    }
+  }
+
+  function closeOverlays() {
+    $('#cardReveal')?.classList.add('hidden');
+    $('#resultStage')?.classList.add('hidden');
+    $('#settingsModal')?.classList.add('hidden');
+    $('#soopBack')?.classList.remove('on');
+    state.pulling = false;
+    $('#pack')?.classList.remove('shaking', 'opening');
   }
 
   function updateUI() {
@@ -235,43 +253,51 @@
 
     await refreshCards();
     if (!state.resolvedCards.length) {
-      alert('뽑기 카드를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.');
+      alert('뽑기 카드를 불러오지 못했습니다. 설정에서 카드를 추가하거나, 잠시 후 다시 시도해 주세요.');
       return false;
     }
 
     state.pulling = true;
-
     const pack = $('#pack');
-    pack.classList.add('shaking');
-    playSound('pull');
-    Sfx.packOpen();
-    await sleep(600);
-    pack.classList.remove('shaking');
-    pack.classList.add('opening');
-    Sfx.packOpen();
-    await sleep(800);
-    pack.classList.remove('opening');
 
-    const results = pull(count);
-    addToHistory(results, donor);
-    save();
-    updateUI();
-    await renderHistory();
+    try {
+      pack.classList.add('shaking');
+      playSound('pull');
+      Sfx.packOpen();
+      await sleep(600);
+      pack.classList.remove('shaking');
+      pack.classList.add('opening');
+      Sfx.packOpen();
+      await sleep(800);
+      pack.classList.remove('opening');
 
-    const donorLabel = donor ? ` — ${donor}` : '';
-    const hasKing = results.some((c) => c.rarity === 'UR');
-    if (hasKing) unlockReset();
+      const results = pull(count);
+      addToHistory(results, donor);
+      save();
+      updateUI();
+      await renderHistory();
 
-    if (count === 1) {
-      const card = results[0];
-      playSound(card.rarity === 'UR' ? 'ur' : card.rarity === 'SR' ? 'sr' : card.rarity === 'R' ? 'r' : card.rarity === 'MISS' ? 'miss' : 'n');
-      await showSingleReveal(card, donorLabel, hasKing);
-    } else {
-      await showMultiReveal(results, donorLabel, hasKing);
+      const donorLabel = donor ? ` — ${donor}` : '';
+      const hasKing = results.some((c) => c.rarity === 'UR');
+      if (hasKing) unlockReset();
+
+      if (count === 1) {
+        const card = results[0];
+        playSound(card.rarity === 'UR' ? 'ur' : card.rarity === 'SR' ? 'sr' : card.rarity === 'R' ? 'r' : card.rarity === 'MISS' ? 'miss' : 'n');
+        await showSingleReveal(card, donorLabel, hasKing);
+      } else {
+        await showMultiReveal(results, donorLabel, hasKing);
+      }
+
+      return true;
+    } catch (err) {
+      console.error('doGacha', err);
+      alert('뽑기 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      return false;
+    } finally {
+      state.pulling = false;
+      pack?.classList.remove('shaking', 'opening');
     }
-
-    state.pulling = false;
-    return true;
   }
 
   function sleep(ms) {
@@ -472,20 +498,26 @@
   }
 
   async function init() {
+    closeOverlays();
     load();
     save();
-    await refreshCards();
-    updateUI();
-    await renderHistory();
     bindTabs();
     bindEvents();
 
-    SoopBridge.init({
-      onAutoPull: async (nick, count) => {
-        SoopBridge.toast(`${nick} 님 ${count}연차 시작!`, true);
-        await doGacha(count, { donor: nick });
-      },
-    });
+    await refreshCards();
+    updateUI();
+    await renderHistory();
+
+    try {
+      SoopBridge.init({
+        onAutoPull: async (nick, count) => {
+          SoopBridge.toast(`${nick} 님 ${count}연차 시작!`, true);
+          await doGacha(count, { donor: nick });
+        },
+      });
+    } catch (err) {
+      console.error('SoopBridge.init', err);
+    }
   }
 
   if (document.readyState === 'loading') {

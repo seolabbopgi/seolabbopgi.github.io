@@ -121,7 +121,7 @@ const CARD_POOL = [
   },
   {
     id: 'seola-general', name: '장수 유설아', stage: '장수', rarity: 'R', type: '촉', hp: 110,
-    moves: [{ energy: ['gi', 'bing'], name: '돌격', desc: '장수의 강력한 돌격.', damage: 55 }],
+    moves: [{ energy: ['shu', 'bing'], name: '돌격', desc: '장수의 강력한 돌격.', damage: 55 }],
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg', no: '003', mark: '장', retreat: 2,
   },
   {

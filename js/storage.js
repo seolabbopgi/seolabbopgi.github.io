@@ -58,26 +58,42 @@ function saveCustomCards(cards) {
   localStorage.setItem(CUSTOM_CARDS_KEY, JSON.stringify(cards));
 }
 
-async function resolveCardImage(card) {
-  if (!card.imageId) return card.image;
-  if (IMAGE_CACHE[card.imageId]) return IMAGE_CACHE[card.imageId];
-  const data = await loadImage(card.imageId);
-  if (data) IMAGE_CACHE[card.imageId] = data;
-  return data ?? card.image;
+function isValidPoolCard(card) {
+  return !!(card && card.id && card.rarity && card.rarity !== 'MISS');
 }
 
+async function resolveCardImage(card) {
+  if (!card?.imageId) return card?.image ?? '';
+  if (IMAGE_CACHE[card.imageId]) return IMAGE_CACHE[card.imageId];
+  try {
+    const data = await loadImage(card.imageId);
+    if (data) IMAGE_CACHE[card.imageId] = data;
+    return data ?? card.image ?? '';
+  } catch {
+    return card.image ?? '';
+  }
+}
+
+/** 기본 5장 + 커스텀(같은 등급은 커스텀이 우선) */
 function getActiveCardPool() {
-  const custom = loadCustomCards();
-  return custom.length > 0 ? custom : CARD_POOL;
+  const custom = loadCustomCards().filter(isValidPoolCard);
+  const byRarity = {};
+  CARD_POOL.forEach((c) => { byRarity[c.rarity] = c; });
+  custom.forEach((c) => { byRarity[c.rarity] = c; });
+  return Object.values(byRarity);
 }
 
 async function getAllCardsResolved() {
   const pool = getActiveCardPool();
   const resolved = await Promise.all(pool.map(async (c) => {
-    const image = await resolveCardImage(c);
-    return { ...c, image: image ?? c.image };
+    try {
+      const image = await resolveCardImage(c);
+      return { ...c, image: image ?? c.image ?? '' };
+    } catch {
+      return { ...c, image: c.image ?? '' };
+    }
   }));
-  return resolved;
+  return resolved.filter(isValidPoolCard);
 }
 
 function getAllCardIds() {
