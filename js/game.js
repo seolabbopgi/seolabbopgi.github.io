@@ -396,6 +396,12 @@
       if (card.rarity === 'UR') flashScreen('ur');
       else if (card.rarity === 'SR') flashScreen('sr');
       $('#revealSub').textContent = sub;
+      const titleEl = $('#revealTitle');
+      if (titleEl) {
+        const ur = card.rarity === 'UR';
+        const sr = card.rarity === 'SR';
+        titleEl.textContent = ur ? '👑 왕 등장!' : sr ? '⚔ 대장군 등장!' : '1뽑 결과!';
+      }
       const summaryEl = $('#revealSummary');
       if (summaryEl) summaryEl.innerHTML = buildResultSummaryHtml([card]);
       stage.classList.remove('hidden');
