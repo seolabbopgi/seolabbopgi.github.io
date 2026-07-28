@@ -115,6 +115,27 @@
     $('#pack')?.classList.remove('shaking', 'opening');
   }
 
+  function remainingByRarity() {
+    const remaining = {};
+    Object.keys(DECK_COMPOSITION).forEach((r) => { remaining[r] = 0; });
+    state.deck.forEach((r) => {
+      remaining[r] = (remaining[r] || 0) + 1;
+    });
+    return remaining;
+  }
+
+  function updateRateCounts() {
+    const remaining = remainingByRarity();
+    $$('#rateInfo .rate[data-rarity]').forEach((el) => {
+      const rarity = el.dataset.rarity;
+      const left = remaining[rarity] ?? 0;
+      const total = DECK_COMPOSITION[rarity] ?? 0;
+      const countEl = el.querySelector('.rate-count');
+      if (countEl) countEl.textContent = `${left}/${total}`;
+      el.classList.toggle('rate-empty', left <= 0);
+    });
+  }
+
   function updateUI() {
     $('#btnSound').textContent = state.soundOn ? '🔊' : '🔇';
     const countEl = $('#historyCount');
@@ -127,6 +148,7 @@
         countEl.textContent = `남은 ${state.deck.length}장`;
       }
     }
+    updateRateCounts();
   }
 
   function snapshotCard(card, donor = '') {

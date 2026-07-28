@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="site-version" content="20260729-24">
+  <meta name="site-version" content="20260729-25">
   <title>삼국지 유설아 카드뽑기</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;700;900&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260729-24">
+  <link rel="stylesheet" href="css/style.css?v=20260729-25">
 </head>
 <body>
   <!-- SOOP 연동 칩 -->
@@ -47,14 +47,14 @@
           <button id="btnTwenty" class="btn btn-gold">👑 20뽑 <small>(1800)</small></button>
         </div>
 
-        <div class="rate-info">
-          <span class="rate ur">왕 ★★ 시크릿 치파오 방셀</span>
-          <span class="rate sr">대장군 ★ 귀여운 치파오 포카방셀</span>
-          <span class="rate r">장수 ◆ 즉석방셀</span>
-          <span class="rate br">백인장 ◇ 역팬 1개</span>
-          <span class="rate n">병사 ● 설뽀</span>
-          <span class="rate c">시민 ○ 윙크</span>
-          <span class="rate miss">꽝</span>
+        <div class="rate-info" id="rateInfo">
+          <span class="rate ur" data-rarity="UR">왕 ★★ 시크릿 치파오 방셀 <b class="rate-count">1/1</b></span>
+          <span class="rate sr" data-rarity="SR">대장군 ★ 귀여운 치파오 포카방셀 <b class="rate-count">2/2</b></span>
+          <span class="rate r" data-rarity="R">장수 ◆ 즉석방셀 <b class="rate-count">5/5</b></span>
+          <span class="rate br" data-rarity="BR">백인장 ◇ 역팬 1개 <b class="rate-count">6/6</b></span>
+          <span class="rate n" data-rarity="N">병사 ● 설뽀 <b class="rate-count">20/20</b></span>
+          <span class="rate c" data-rarity="C">시민 ○ 윙크 <b class="rate-count">30/30</b></span>
+          <span class="rate miss" data-rarity="MISS">꽝 <b class="rate-count">36/36</b></span>
         </div>
         <p class="deck-note">총 100장 덱 · 뽑으면 줄어듦 · 다 뽑으면 자동 초기화</p>
       </section>
@@ -179,10 +179,10 @@
     </div>
   </div>
 
-  <script src="js/cards.js?v=20260729-24"></script>
-  <script src="js/storage.js?v=20260729-24"></script>
-  <script src="js/sfx.js?v=20260729-24"></script>
-  <script src="js/soop.js?v=20260729-24"></script>
-  <script src="js/game.js?v=20260729-24"></script>
+  <script src="js/cards.js?v=20260729-25"></script>
+  <script src="js/storage.js?v=20260729-25"></script>
+  <script src="js/sfx.js?v=20260729-25"></script>
+  <script src="js/soop.js?v=20260729-25"></script>
+  <script src="js/game.js?v=20260729-25"></script>
 </body>
 </html>

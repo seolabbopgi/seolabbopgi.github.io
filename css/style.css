@@ -310,6 +310,16 @@ html, body {
 .rate.c { color: #4E342E; background: #EFEBE9; border-color: #A1887F; }
 .rate.miss { color: #fff; background: var(--miss); border-color: var(--miss); }
 
+.rate .rate-count {
+  margin-left: 4px;
+  font-weight: 900;
+  opacity: 0.95;
+}
+
+.rate.rate-empty {
+  opacity: 0.45;
+}
+
 .deck-note {
   text-align: center;
   font-size: 0.82em;
