@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "cards": [
     {
       "id": "shared-king",
@@ -9,7 +9,7 @@
       "type": "촉",
       "hp": 130,
       "desc": "감히 병사라고 무시하지 마라! 여왕이 강림했다.",
-      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "image": "assets/cards/king.png",
       "lord": true,
       "holo": true,
       "mark": "왕",
@@ -25,7 +25,7 @@
       "type": "위",
       "hp": 130,
       "desc": "대장군의 위엄으로 적군을 압도한다.",
-      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "image": "assets/cards/grand-general.png",
       "holo": true,
       "mark": "대장",
       "artist": "SeolA",
@@ -40,7 +40,7 @@
       "type": "촉",
       "hp": 110,
       "desc": "전장을 지휘하는 장수, 명랑하게 적진을 향해 뛰어든다.",
-      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "image": "assets/cards/general.png",
       "mark": "장",
       "artist": "SeolA",
       "retreat": 2,
@@ -54,7 +54,7 @@
       "type": "오",
       "hp": 100,
       "desc": "실제 전장을 지휘하는 백인장으로서 적을 마구마구 벱니다.",
-      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "image": "assets/cards/centurion.png",
       "mark": "백",
       "artist": "SeolA",
       "retreat": 1,
@@ -68,7 +68,7 @@
       "type": "군",
       "hp": 100,
       "desc": "무력은 약하지만 용기는 가장한 병사입니다.",
-      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "image": "assets/cards/soldier.png",
       "artist": "SeolA",
       "retreat": 1,
       "no": "005"
