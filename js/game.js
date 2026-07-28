@@ -52,8 +52,8 @@
   function createCardElement(card) {
     const el = document.createElement('div');
     el.className = 'pokemon-card';
-    if (card.holo) el.classList.add('holo');
-    if (card.rarity === 'UR') el.classList.add('flash-ur');
+    if (card.holo || card.rarity === 'UR' || card.rarity === 'SR') el.classList.add('holo');
+    if (card.rarity === 'UR') el.classList.add('sar-frame', 'flash-ur');
     if (card.rarity === 'SR') el.classList.add('flash-sr');
 
     const inner = document.createElement('div');
@@ -63,52 +63,16 @@
     back.className = 'card-back';
 
     const front = document.createElement('div');
-    const typeColor = TYPE_COLORS[card.type] || '#999';
-    front.className = `card-front rarity-${card.rarity}`;
-    front.style.setProperty('--type-color', typeColor);
+    front.className = `card-front sar-card rarity-${card.rarity}`;
+    front.innerHTML = buildCardFrontHTML(card, getCardCount());
 
-    if (card.rarity === 'MISS') {
-      front.innerHTML = `
-        <div class="card-miss-body">
-          <span class="card-miss-text">꽝</span>
-          <p>다음엔 뽑혀요!</p>
-        </div>`;
-    } else {
-      const stage = getStage(card);
-      const grade = getRarityLine(card.rarity);
-      const energy = '●'.repeat(card.energy || 1);
-      const total = getCardCount();
-
-      front.innerHTML = `
-        <div class="card-stage-row">
-          <span class="card-stage">${esc(stage)}</span>
-          <span class="card-type-badge" style="background:${typeColor}">${esc(card.type)}</span>
-        </div>
-        <div class="card-name-row">
-          <span class="card-name">${esc(card.name)}</span>
-          <span class="card-hp"><small>HP</small> ${card.hp}</span>
-        </div>
-        <div class="card-art-box">
-          <img src="${esc(card.image)}" alt="${esc(card.name)}" loading="lazy" decoding="async">
-        </div>
-        <div class="card-attack-row">
-          <span class="card-energy">${energy}</span>
-          <span class="card-attack-name">${esc(card.attack)}</span>
-          <span class="card-attack-dmg">${card.damage}</span>
-        </div>
-        <p class="card-flavor">${esc(card.desc)}</p>
-        <div class="card-footer-row">
-          <span class="card-rarity-mark rarity-${card.rarity}">${grade}</span>
-          <span class="card-no">${card.no || '?'}/${String(total).padStart(3, '0')}</span>
-        </div>`;
-
-      const img = front.querySelector('img');
-      if (img) {
-        img.onerror = () => {
-          img.closest('.card-art-box').classList.add('art-fallback');
-          img.remove();
-        };
-      }
+    const img = front.querySelector('.card-fullart img');
+    if (img) {
+      img.onerror = () => {
+        const art = img.closest('.card-fullart');
+        if (art) art.classList.add('art-fallback');
+        img.remove();
+      };
     }
 
     inner.appendChild(back);

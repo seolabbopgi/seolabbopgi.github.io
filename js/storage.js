@@ -95,17 +95,23 @@ async function addCustomCard(meta, file) {
   const card = {
     id: 'custom-' + Date.now(),
     name: meta.name || '유설아',
-    subtitle: meta.subtitle || '커스텀',
+    stage: meta.stage || '기본',
     rarity: meta.rarity || 'R',
     type: meta.type || '노말',
     hp: +meta.hp || 100,
-    attack: meta.attack || '커스텀 공격',
-    damage: +meta.damage || 50,
-    desc: meta.desc || '직접 추가한 카드',
+    moves: [{
+      energy: [TYPE_ENERGY[meta.type || '노말'] || 'colorless', 'colorless'],
+      name: meta.attack || '커스텀 공격',
+      desc: meta.desc || '직접 추가한 카드',
+      damage: +meta.damage || 50,
+    }],
     imageId,
-    filter: 'none',
     custom: true,
-    holo: meta.rarity === 'UR',
+    holo: meta.rarity === 'UR' || meta.rarity === 'SR',
+    ex: meta.rarity === 'UR',
+    mark: meta.rarity === 'UR' ? 'SAR' : meta.rarity === 'SR' ? 'R' : '',
+    artist: 'Custom',
+    retreat: meta.rarity === 'UR' ? 1 : 2,
   };
 
   const cards = loadCustomCards();
