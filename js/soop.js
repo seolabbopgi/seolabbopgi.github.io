@@ -21,9 +21,8 @@ const SoopBridge = (() => {
 
   function defaultRelay() {
     const h = location.hostname.replace(/^www\./, '');
-    if (h === 'seolabbopgi.github.io' || h.endsWith('.github.io')) {
-      return 'wss://relay.hedasong.com';
-    }
+    if (h === 'seolabbopgi.com') return 'wss://relay.seolabbopgi.com';
+    if (h === 'seolabbopgi.github.io') return 'wss://relay.hedasong.com';
     if (h && h !== 'localhost' && h !== '127.0.0.1') return `wss://relay.${h}`;
     return 'wss://relay.hedasong.com';
   }
