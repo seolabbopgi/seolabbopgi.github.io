@@ -159,7 +159,7 @@ async function addCustomCard(meta, file) {
     custom: true,
     holo: meta.rarity === 'UR' || meta.rarity === 'SR',
     lord: meta.rarity === 'UR',
-    mark: { UR: '왕', SR: '대장', R: '장', BR: '백', N: '' }[meta.rarity] || '',
+    mark: { UR: '왕', SR: '대장', R: '장', BR: '백', N: '', C: '' }[meta.rarity] || '',
     artist: 'Custom',
     retreat: meta.rarity === 'UR' ? 1 : 2,
     no: String(cards.length + 1).padStart(3, '0'),

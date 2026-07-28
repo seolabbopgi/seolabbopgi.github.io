@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "cards": [
     {
       "id": "shared-king",
@@ -72,6 +72,19 @@
       "artist": "SeolA",
       "retreat": 1,
       "no": "005"
+    },
+    {
+      "id": "shared-citizen",
+      "name": "시민 유설아",
+      "stage": "시민",
+      "rarity": "C",
+      "type": "군",
+      "hp": 50,
+      "desc": "평범한 시민입니다",
+      "image": "assets/cards/citizen.png",
+      "artist": "SeolA",
+      "retreat": 1,
+      "no": "006"
     }
   ]
 }

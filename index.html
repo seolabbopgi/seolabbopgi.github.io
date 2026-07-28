@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="site-version" content="20260729-22">
+  <meta name="site-version" content="20260729-23">
   <title>삼국지 유설아 카드뽑기</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;700;900&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260729-22">
+  <link rel="stylesheet" href="css/style.css?v=20260729-23">
 </head>
 <body>
   <!-- SOOP 연동 칩 -->
@@ -48,14 +48,15 @@
         </div>
 
         <div class="rate-info">
-          <span class="rate ur">왕 ★★ 1장</span>
-          <span class="rate sr">대장군 ★ 3장</span>
-          <span class="rate r">장수 ◆ 8장</span>
-          <span class="rate br">백인장 ◇ 15장</span>
-          <span class="rate n">병사 ● 30장</span>
-          <span class="rate miss">꽝 43장</span>
+          <span class="rate ur">왕 ★★ 시크릿 치파오 방셀</span>
+          <span class="rate sr">대장군 ★ 귀여운 치파오 포카방셀</span>
+          <span class="rate r">장수 ◆ 즉석방셀</span>
+          <span class="rate br">백인장 ◇ 역팬 1개</span>
+          <span class="rate n">병사 ● 설뽀</span>
+          <span class="rate c">시민 ○ 윙크</span>
+          <span class="rate miss">꽝</span>
         </div>
-        <p class="deck-note">총 100장 덱 · 뽑으면 줄어듦 · 🔄 리셋 시 덱 복구</p>
+        <p class="deck-note">총 100장 덱 · 뽑으면 줄어듦 · 다 뽑으면 자동 초기화</p>
       </section>
 
       <section id="historyZone" class="panel">
@@ -67,7 +68,6 @@
 
     <footer id="toolbar">
       <button id="btnSound" class="tool-btn" title="효과음">🔊</button>
-      <button id="btnReset" class="tool-btn" title="나온 내역 리셋">🔄</button>
       <button id="btnSettings" class="tool-btn" title="설정">⚙</button>
     </footer>
   </div>
@@ -106,7 +106,7 @@
 
       <div id="tabGeneral" class="tab-panel active">
         <h2>⚙ 일반 설정</h2>
-        <p class="modal-note">1뽑 · 10뽑 · 20뽑 버튼으로 뽑기. 🔄로 내역·덱 리셋.</p>
+        <p class="modal-note">1뽑 · 10뽑 · 20뽑 버튼으로 뽑기. 100장 다 뽑으면 덱이 자동 초기화됩니다.</p>
       </div>
 
       <div id="tabCards" class="tab-panel">
@@ -119,6 +119,7 @@
           <label>부제<input type="text" id="cardSubtitle" placeholder="예: 생일 축하" maxlength="20"></label>
           <label>등급
             <select id="cardRarity">
+              <option value="C">시민</option>
               <option value="N">병사</option>
               <option value="BR">백인장</option>
               <option value="R" selected>장수</option>
@@ -178,10 +179,10 @@
     </div>
   </div>
 
-  <script src="js/cards.js?v=20260729-22"></script>
-  <script src="js/storage.js?v=20260729-22"></script>
-  <script src="js/sfx.js?v=20260729-22"></script>
-  <script src="js/soop.js?v=20260729-22"></script>
-  <script src="js/game.js?v=20260729-22"></script>
+  <script src="js/cards.js?v=20260729-23"></script>
+  <script src="js/storage.js?v=20260729-23"></script>
+  <script src="js/sfx.js?v=20260729-23"></script>
+  <script src="js/soop.js?v=20260729-23"></script>
+  <script src="js/game.js?v=20260729-23"></script>
 </body>
 </html>

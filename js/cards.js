@@ -10,14 +10,24 @@ const WEAKNESS_MAP = {
   '위': 'shu', '촉': 'wu', '오': 'wei', '군': 'wei',
 };
 
-const RARITY_SYMBOL = { N: '●', BR: '◇', R: '◆', SR: '★', UR: '★★', MISS: '—' };
-const RARITY_GRADE = { N: '병사', BR: '백인장', R: '장수', SR: '대장군', UR: '왕', MISS: '—' };
-const RARITY_MARK = { N: '', BR: '백', R: '장', SR: '대장', UR: '왕', MISS: '' };
-const STAGE_LABEL = { N: '병사', BR: '백인장', R: '장수', SR: '대장군', UR: '왕', MISS: '' };
+const RARITY_SYMBOL = { C: '○', N: '●', BR: '◇', R: '◆', SR: '★', UR: '★★', MISS: '—' };
+const RARITY_GRADE = { C: '시민', N: '병사', BR: '백인장', R: '장수', SR: '대장군', UR: '왕', MISS: '—' };
+const RARITY_MARK = { C: '', N: '', BR: '백', R: '장', SR: '대장', UR: '왕', MISS: '' };
+const STAGE_LABEL = { C: '시민', N: '병사', BR: '백인장', R: '장수', SR: '대장군', UR: '왕', MISS: '' };
+const RARITY_REWARD = {
+  UR: '시크릿 치파오 방셀',
+  SR: '귀여운 치파오 포카방셀',
+  R: '즉석방셀',
+  BR: '역팬 1개',
+  N: '설뽀',
+  C: '윙크',
+  MISS: '',
+};
 const CARD_SET_TOTAL = 100;
+const DECK_VERSION = 2;
 
 /** 100장 덱 구성 (총 100장) */
-const DECK_COMPOSITION = { UR: 1, SR: 3, R: 8, BR: 15, N: 30, MISS: 43 };
+const DECK_COMPOSITION = { UR: 1, SR: 3, R: 8, BR: 15, N: 30, C: 15, MISS: 28 };
 
 function shuffleDeck(deck) {
   const arr = deck.slice();
@@ -121,8 +131,13 @@ function buildCardFrontHTML(card, totalCards = CARD_SET_TOTAL) {
     </div>`;
 }
 
-/** 기본 카드 5장 — 커스텀 카드가 없을 때 사용 (왕·대장군·장수·백인장·병사) */
+/** 기본 카드 — 커스텀/공유 카드가 없을 때 사용 */
 const CARD_POOL = [
+  {
+    id: 'seola-citizen', name: '시민 유설아', stage: '시민', rarity: 'C', type: '군', hp: 50,
+    moves: [{ energy: ['bing'], name: '일상', desc: '평범한 시민입니다', damage: 10 }],
+    image: 'assets/cards/citizen.png', no: '000', retreat: 1,
+  },
   {
     id: 'seola-soldier', name: '병사 유설아', stage: '병사', rarity: 'N', type: '군', hp: 70,
     moves: [{ energy: ['bing'], name: '투창', desc: '병사 유설아의 기본 공격.', damage: 30 }],
@@ -157,6 +172,6 @@ const MISS_CARD = {
   id: 'miss', name: '꽝', rarity: 'MISS', type: '—', hp: 0, image: null, no: '—',
 };
 
-const RARITY_DECK_INFO = { UR: '1장', SR: '3장', R: '8장', BR: '15장', N: '30장', MISS: '43장' };
-const RARITY_LABELS = { UR: '왕', SR: '대장군', R: '장수', BR: '백인장', N: '병사', MISS: '—' };
-const RARITY_COLORS = { UR: '#FFD700', SR: '#7B1FA2', R: '#1565C0', BR: '#558B2F', N: '#B0BEC5', MISS: '#78909C' };
+const RARITY_DECK_INFO = { UR: '1장', SR: '3장', R: '8장', BR: '15장', N: '30장', C: '15장', MISS: '28장' };
+const RARITY_LABELS = { UR: '왕', SR: '대장군', R: '장수', BR: '백인장', N: '병사', C: '시민', MISS: '—' };
+const RARITY_COLORS = { UR: '#FFD700', SR: '#7B1FA2', R: '#1565C0', BR: '#558B2F', N: '#B0BEC5', C: '#D7CCC8', MISS: '#78909C' };

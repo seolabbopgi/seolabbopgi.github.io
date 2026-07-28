@@ -277,11 +277,11 @@ html, body {
 
 .rate-info {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 10px;
-  font-size: 0.78em;
+  font-size: 0.72em;
 }
 
 .rate {
@@ -307,6 +307,7 @@ html, body {
 .rate.r { color: #fff; background: var(--r); border-color: var(--r); box-shadow: 0 0 10px rgba(21, 101, 192, 0.5); }
 .rate.br { color: #fff; background: #558B2F; border-color: #558B2F; box-shadow: 0 0 10px rgba(85, 139, 47, 0.5); }
 .rate.n { color: #333; background: #ECEFF1; border-color: var(--n); }
+.rate.c { color: #4E342E; background: #EFEBE9; border-color: #A1887F; }
 .rate.miss { color: #fff; background: var(--miss); border-color: var(--miss); }
 
 .deck-note {
@@ -415,6 +416,7 @@ html, body {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
+.card-front.rarity-C { border-color: rgba(161, 136, 127, 0.7); }
 .card-front.rarity-N { border-color: rgba(176, 190, 197, 0.7); }
 .card-front.rarity-BR { border-color: rgba(85, 139, 47, 0.85); box-shadow: 0 0 12px rgba(85, 139, 47, 0.35); }
 .card-front.rarity-R { border-color: rgba(41, 182, 246, 0.85); box-shadow: 0 0 14px rgba(41,182,246,.35); }
@@ -906,6 +908,7 @@ html, body {
   color: #fff;
 }
 
+.slot-rarity.rarity-C { background: #A1887F; }
 .slot-rarity.rarity-N { background: #78909C; }
 .slot-rarity.rarity-BR { background: #558B2F; }
 .slot-rarity.rarity-R { background: #0288D1; }
@@ -932,6 +935,7 @@ html, body {
 .history-slot .slot-grade.rarity-R { color: #81D4FA; }
 .history-slot .slot-grade.rarity-N { color: #CFD8DC; }
 .history-slot .slot-grade.rarity-BR { color: #C5E1A5; }
+.history-slot .slot-grade.rarity-C { color: #D7CCC8; }
 .history-slot .slot-grade.rarity-MISS { color: #B0BEC5; }
 
 /* ===== 결과 스테이지 ===== */
@@ -1040,6 +1044,7 @@ html, body {
 .result-sum.rarity-R { border-color: #29B6F6; color: #B3E5FC; background: rgba(41, 182, 246, 0.12); }
 .result-sum.rarity-BR { border-color: #7CB342; color: #DCEDC8; background: rgba(124, 179, 66, 0.12); }
 .result-sum.rarity-N { border-color: #B0BEC5; color: #ECEFF1; background: rgba(176, 190, 197, 0.12); }
+.result-sum.rarity-C { border-color: #A1887F; color: #D7CCC8; background: rgba(161, 136, 127, 0.15); }
 .result-sum.rarity-MISS { border-color: #78909C; color: #CFD8DC; background: rgba(120, 144, 156, 0.15); }
 
 @keyframes cardPop {

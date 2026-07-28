@@ -32,6 +32,7 @@
     const payload = JSON.stringify({
       history: state.history.map(compactHistoryEntry),
       deck: state.deck,
+      deckVersion: DECK_VERSION,
       soundOn: state.soundOn,
     });
 
@@ -48,6 +49,7 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           history: state.history.map(compactHistoryEntry),
           deck: state.deck,
+          deckVersion: DECK_VERSION,
           soundOn: state.soundOn,
         }));
         return;
@@ -73,7 +75,7 @@
         }).map(compactHistoryEntry)
         : [];
       state.soundOn = data.soundOn ?? true;
-      if (Array.isArray(data.deck) && data.deck.length) {
+      if (data.deckVersion === DECK_VERSION && Array.isArray(data.deck) && data.deck.length) {
         state.deck = data.deck;
       } else {
         state.deck = deckFromRemainingCounts(remainingCountsFromHistory(state.history));
@@ -84,6 +86,11 @@
 
   function initDeck() {
     state.deck = buildFreshDeck();
+  }
+
+  function resetPackCycle() {
+    state.history = [];
+    initDeck();
   }
 
   function fallbackCardPool() {
@@ -120,21 +127,6 @@
         countEl.textContent = `남은 ${state.deck.length}장`;
       }
     }
-  }
-
-  async function resetHistory() {
-    if (!state.history.length) {
-      alert('아직 리셋할 내역이 없어요.');
-      return;
-    }
-    if (!confirm('나온 내역을 모두 초기화할까요?')) return;
-    state.history = [];
-    initDeck();
-    save();
-    updateUI();
-    await renderHistory();
-    $('#resultStage').classList.add('hidden');
-    $('#cardReveal').classList.add('hidden');
   }
 
   function snapshotCard(card, donor = '') {
@@ -322,8 +314,10 @@
       return false;
     }
     if (!state.deck.length) {
-      alert('100장을 모두 뽑았습니다. 🔄 리셋 후 다시 뽑을 수 있어요.');
-      return false;
+      resetPackCycle();
+      save();
+      await renderHistory();
+      updateUI();
     }
 
     state.pulling = true;
@@ -342,7 +336,10 @@
 
       const results = pull(count);
       if (!results.length) {
-        alert('100장을 모두 뽑았습니다. 🔄 리셋 후 다시 뽑을 수 있어요.');
+        resetPackCycle();
+        save();
+        await renderHistory();
+        updateUI();
         return false;
       }
       if (results.length < count) {
@@ -415,7 +412,7 @@
   }
 
   function buildResultSummaryHtml(results) {
-    const order = ['UR', 'SR', 'R', 'BR', 'N', 'MISS'];
+    const order = ['UR', 'SR', 'R', 'BR', 'N', 'C', 'MISS'];
     const counts = {};
     results.forEach((c) => {
       counts[c.rarity] = (counts[c.rarity] || 0) + 1;
@@ -425,7 +422,8 @@
       .map((r) => {
         const label = r === 'MISS' ? '꽝' : (RARITY_GRADE[r] || r);
         const sym = RARITY_SYMBOL[r] || '';
-        return `<span class="result-sum rarity-${r}">${sym} ${label} <b>${counts[r]}</b>장</span>`;
+        const reward = RARITY_REWARD[r] ? ` · ${RARITY_REWARD[r]}` : '';
+        return `<span class="result-sum rarity-${r}">${sym} ${label}${reward} <b>${counts[r]}</b>장</span>`;
       });
     return items.length
       ? `<p class="result-sum-title">등급별 결과</p><div class="result-sum-row">${items.join('')}</div>`
@@ -439,7 +437,7 @@
       container.innerHTML = '';
 
       const best = results.reduce((a, b) => {
-        const order = { UR: 6, SR: 5, R: 4, BR: 3, N: 2, MISS: 1 };
+        const order = { UR: 7, SR: 6, R: 5, BR: 4, N: 3, C: 2, MISS: 1 };
         return (order[a.rarity] ?? 0) >= (order[b.rarity] ?? 0) ? a : b;
       });
       playSound(best.rarity === 'UR' ? 'ur' : best.rarity === 'SR' ? 'sr' : 'pull');
@@ -522,8 +520,6 @@
       updateUI();
       save();
     });
-
-    $('#btnReset').addEventListener('click', () => resetHistory());
 
     $('#btnSettings').addEventListener('click', () => {
       renderCustomCardList();
