@@ -116,11 +116,6 @@
     $('#cardReveal').classList.add('hidden');
   }
 
-  function showResetBars() {
-    $('#revealResetBar')?.classList.remove('hidden');
-    $('#resultResetBar')?.classList.remove('hidden');
-  }
-
   function snapshotCard(card, donor = '') {
     return compactHistoryEntry({
       uid: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -380,10 +375,8 @@
       if (card.rarity === 'UR') flashScreen('ur');
       else if (card.rarity === 'SR') flashScreen('sr');
       $('#revealSub').textContent = sub;
-      showResetBars();
       stage.classList.remove('hidden');
-      const close = (e) => {
-        if (e?.target?.closest?.('.reset-bar button')) return;
+      const close = () => {
         stage.classList.add('hidden');
         stage.removeEventListener('click', close);
         resolve();
@@ -413,11 +406,9 @@
       else if (srCount) title += ` ⚔ 대장군 ${srCount}장!`;
       $('#resultTitle').textContent = title;
       $('#resultSub').textContent = sub;
-      showResetBars();
 
       stage.classList.remove('hidden');
-      const close = (e) => {
-        if (e?.target?.closest?.('.reset-bar button')) return;
+      const close = () => {
         stage.classList.add('hidden');
         stage.removeEventListener('click', close);
         resolve();
@@ -483,14 +474,6 @@
     });
 
     $('#btnReset').addEventListener('click', () => resetHistory());
-    $('#btnRevealReset').addEventListener('click', (e) => {
-      e.stopPropagation();
-      resetHistory();
-    });
-    $('#btnResultReset').addEventListener('click', (e) => {
-      e.stopPropagation();
-      resetHistory();
-    });
 
     $('#btnSettings').addEventListener('click', () => {
       renderCustomCardList();
