@@ -319,18 +319,15 @@ html, body {
 .rate.n { color: #333; background: #ECEFF1; border-color: var(--n); }
 .rate.miss { color: #fff; background: var(--miss); border-color: var(--miss); }
 
-/* ===== 포켓몬 카드 ===== */
+/* ===== 포켓몬 TCG 카드 ===== */
 .pokemon-card {
   width: 200px;
   aspect-ratio: 63/88;
-  border-radius: 12px;
+  border-radius: 14px;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.3s;
   flex-shrink: 0;
 }
-
-.pokemon-card.flipped { transform: rotateY(180deg); }
 
 .card-inner {
   width: 100%;
@@ -340,184 +337,211 @@ html, body {
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.pokemon-card.revealing .card-inner { transform: rotateY(180deg); }
-
 .card-front, .card-back {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
 }
 
 .card-back {
-  background: linear-gradient(145deg, #1a3a7a, #0d2255);
-  border: 4px solid var(--star-yellow);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: repeating-linear-gradient(45deg, #1a3a7a 0 8px, #0d2255 8px 16px);
+  border: 5px solid #FFD700;
+  box-shadow: inset 0 0 30px rgba(255,215,0,.3);
 }
 
 .card-back::before {
   content: '♡';
-  font-size: 4em;
-  color: var(--star-yellow);
-  opacity: 0.6;
-}
-
-.card-back::after {
-  content: '유설아';
   position: absolute;
-  bottom: 20%;
-  font-family: 'Jua', sans-serif;
-  color: rgba(255,255,255,.5);
-  font-size: 0.9em;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4em;
+  color: #FFD700;
+  opacity: 0.7;
 }
 
 .card-front {
   transform: rotateY(180deg);
-  background: var(--paper-cream);
-  border: 4px solid #333;
+  background: linear-gradient(165deg, #FFFEF5 0%, #FFF8DC 40%, #FFEEBA 100%);
+  border: 5px solid #C9A227;
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  padding: 6px 7px 5px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.8);
 }
 
+.card-front.rarity-N { border-color: #B0BEC5; }
+.card-front.rarity-R { border-color: #29B6F6; box-shadow: 0 0 16px rgba(41,182,246,.5), inset 0 0 0 2px rgba(255,255,255,.8); }
+.card-front.rarity-SR { border-color: #AB47BC; box-shadow: 0 0 20px rgba(171,71,188,.6), inset 0 0 0 2px rgba(255,255,255,.8); }
 .card-front.rarity-UR {
-  border-color: var(--ur);
-  box-shadow: 0 0 30px rgba(255,215,0,.9), 0 0 60px rgba(255,165,0,.5);
+  border-color: #FFD700;
+  background: linear-gradient(165deg, #FFFDE7 0%, #FFF9C4 30%, #FFE082 100%);
+  box-shadow: 0 0 28px rgba(255,215,0,.8), inset 0 0 0 2px rgba(255,255,255,.9);
 }
-.card-front.rarity-SR {
-  border-color: var(--sr);
-  box-shadow: 0 0 25px rgba(224,64,251,.8), 0 0 50px rgba(191,0,255,.4);
-}
-.card-front.rarity-R { border-color: var(--r); box-shadow: 0 0 20px rgba(0,229,255,.6); }
-.card-front.rarity-N { border-color: var(--n); }
-.card-front.rarity-MISS { border-color: var(--miss); background: #eee; }
+.card-front.rarity-MISS { border-color: #999; background: #eee; justify-content: center; align-items: center; }
 
-.card-header {
+.card-stage-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.card-stage {
+  font-size: 0.58em;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: -0.02em;
+}
+
+.card-type-badge {
+  font-size: 0.5em;
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: 10px;
+  font-weight: bold;
+  text-shadow: 0 1px 1px rgba(0,0,0,.4);
+}
+
+.card-name-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding-bottom: 4px;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #333;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .card-name {
   font-family: 'Jua', sans-serif;
-  font-size: 0.95em;
-  color: var(--ink);
+  font-size: 0.88em;
+  color: #1a1a1a;
+  font-weight: bold;
 }
 
 .card-hp {
   font-family: 'Jua', sans-serif;
-  font-size: 0.85em;
-  color: var(--sign-red);
+  font-size: 0.82em;
+  color: #D32F2F;
+  font-weight: bold;
 }
 
-.card-hp::before { content: 'HP '; font-size: 0.7em; }
+.card-hp small { font-size: 0.65em; color: #D32F2F; }
 
-.card-subtitle {
-  font-size: 0.65em;
-  color: #888;
-  margin-top: 1px;
-}
-
-.card-image-wrap {
+.card-art-box {
   flex: 1;
-  margin: 6px 0;
+  min-height: 0;
+  margin: 3px 0;
+  border: 3px solid #555;
   border-radius: 6px;
   overflow: hidden;
-  background: linear-gradient(180deg, #e8f4fd, #b8dff9);
-  border: 2px solid #aaa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  min-height: 0;
+  background: #fff;
+  box-shadow: inset 0 0 8px rgba(0,0,0,.08);
 }
 
-.card-image-wrap img {
+.card-art-box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
+  display: block;
   filter: none !important;
+  -webkit-filter: none !important;
 }
 
-.card-front.rarity-UR .card-image-wrap { box-shadow: inset 0 0 12px rgba(255,215,0,.5); border-color: var(--ur); }
-.card-front.rarity-SR .card-image-wrap { box-shadow: inset 0 0 12px rgba(224,64,251,.4); border-color: var(--sr); }
-.card-front.rarity-R .card-image-wrap { box-shadow: inset 0 0 10px rgba(0,229,255,.35); border-color: var(--r); }
-.card-front.rarity-N .card-image-wrap { border-color: #90A4AE; }
-
-.card-image-wrap.miss {
-  background: repeating-linear-gradient(45deg, #ddd, #ddd 10px, #ccc 10px, #ccc 20px);
+.card-art-box.art-fallback {
+  background: linear-gradient(180deg, #E3F2FD, #BBDEFB);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.card-image-wrap.miss::after {
-  content: '꽝';
-  font-family: 'Jua', sans-serif;
+.card-art-box.art-fallback::after {
+  content: '?';
   font-size: 2em;
   color: #999;
 }
 
-.card-attack {
-  font-size: 0.72em;
-  padding: 4px 0;
+.card-attack-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 4px;
+  align-items: center;
+  border-top: 1px solid #999;
+  padding-top: 3px;
+  margin-top: 2px;
+  font-size: 0.62em;
+}
+
+.card-energy {
+  color: #FFD700;
+  text-shadow: 0 0 2px #333, 0 0 4px #FFA000;
+  font-size: 1.1em;
+  letter-spacing: -2px;
+}
+
+.card-attack-name { font-weight: bold; color: #222; }
+
+.card-attack-dmg {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.15em;
+  color: #D32F2F;
+  font-weight: bold;
+}
+
+.card-flavor {
+  font-size: 0.5em;
+  color: #555;
+  line-height: 1.25;
+  margin: 2px 0;
+  flex-shrink: 0;
+}
+
+.card-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 2px;
   border-top: 1px dashed #bbb;
 }
 
-.card-attack .dmg {
+.card-rarity-mark {
   font-family: 'Jua', sans-serif;
-  color: var(--sign-red);
-  float: right;
+  font-size: 0.65em;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
-.card-desc {
-  font-size: 0.58em;
-  color: #666;
-  line-height: 1.3;
-  margin-top: 2px;
+.card-rarity-mark.rarity-N { color: #546E7A; }
+.card-rarity-mark.rarity-R { color: #0288D1; }
+.card-rarity-mark.rarity-SR { color: #8E24AA; }
+.card-rarity-mark.rarity-UR { color: #F57F17; text-shadow: 0 0 6px rgba(255,193,7,.8); }
+
+.card-no {
+  font-size: 0.48em;
+  color: #888;
+  font-variant-numeric: tabular-nums;
 }
 
-.card-rarity-badge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  font-family: 'Jua', sans-serif;
-  font-size: 0.6em;
-  padding: 1px 6px;
-  border-radius: 4px;
-  color: #fff;
-  z-index: 2;
-}
+.card-miss-body { text-align: center; color: #999; }
+.card-miss-text { font-family: 'Jua', sans-serif; font-size: 2em; display: block; }
 
-.card-rarity-badge.UR { background: linear-gradient(135deg, #FFD700, #FFA500); color: #333; }
-.card-rarity-badge.SR { background: var(--sr); }
-.card-rarity-badge.R { background: var(--r); }
-.card-rarity-badge.N { background: var(--n); color: #333; }
-.card-rarity-badge.MISS { background: var(--miss); }
-
-/* 홀로그램 효과 */
 .pokemon-card.holo .card-front::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    125deg,
-    transparent 20%,
-    rgba(255,215,0,.12) 35%,
-    rgba(255,20,147,.12) 50%,
-    rgba(0,245,255,.12) 65%,
-    transparent 80%
-  );
+  background: linear-gradient(125deg, transparent 25%, rgba(255,215,0,.15) 40%, rgba(255,20,147,.1) 55%, transparent 70%);
   pointer-events: none;
-  animation: holoShift 1.5s infinite;
-  mix-blend-mode: overlay;
+  animation: holoShift 2s infinite;
 }
 
 @keyframes holoShift {
-  0%, 100% { opacity: 0.7; transform: translateX(-10%); }
-  50% { opacity: 1; transform: translateX(10%); }
+  0%, 100% { opacity: 0.5; transform: translateX(-15%); }
+  50% { opacity: 0.9; transform: translateX(15%); }
 }
 
 /* ===== 도감 ===== */
@@ -530,11 +554,11 @@ html, body {
 .album-slot {
   aspect-ratio: 63/88;
   border: 3px dashed #bbb;
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: linear-gradient(165deg, #FFFEF5, #FFEEBA);
   overflow: hidden;
   position: relative;
   cursor: pointer;
@@ -542,8 +566,21 @@ html, body {
 }
 
 .album-slot:hover { transform: scale(1.05); }
-.album-slot.owned { border-style: solid; border-color: var(--tab-blue); }
-.album-slot.owned img { width: 100%; height: 100%; object-fit: cover; }
+.album-slot.owned {
+  border-style: solid;
+  border-width: 3px;
+  border-color: #C9A227;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+
+.album-slot.owned img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: none !important;
+  -webkit-filter: none !important;
+}
 
 .album-slot .slot-num {
   font-family: 'Jua', sans-serif;
@@ -553,26 +590,39 @@ html, body {
 
 .album-slot .slot-rarity {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
+  top: 3px;
+  right: 3px;
   font-size: 0.55em;
   font-family: 'Jua', sans-serif;
-  padding: 1px 4px;
-  border-radius: 3px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border-radius: 4px;
   color: #fff;
 }
 
-.album-slot .slot-name {
+.slot-rarity.rarity-N { background: #78909C; }
+.slot-rarity.rarity-R { background: #0288D1; }
+.slot-rarity.rarity-SR { background: #8E24AA; }
+.slot-rarity.rarity-UR { background: linear-gradient(135deg, #FFD700, #FF8F00); color: #333; }
+
+.album-slot .slot-grade {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0,0,0,.6);
-  color: #fff;
+  background: rgba(0,0,0,.75);
+  color: #FFD700;
+  font-family: 'Jua', sans-serif;
   font-size: 0.55em;
   text-align: center;
-  padding: 2px;
+  padding: 3px 2px;
+  letter-spacing: 1px;
 }
+
+.album-slot .slot-grade.rarity-UR { color: #FFE082; }
+.album-slot .slot-grade.rarity-SR { color: #E1BEE7; }
+.album-slot .slot-grade.rarity-R { color: #81D4FA; }
+.album-slot .slot-grade.rarity-N { color: #CFD8DC; }
 
 /* ===== 결과 스테이지 ===== */
 .stage {

@@ -63,49 +63,53 @@
     back.className = 'card-back';
 
     const front = document.createElement('div');
+    const typeColor = TYPE_COLORS[card.type] || '#999';
     front.className = `card-front rarity-${card.rarity}`;
+    front.style.setProperty('--type-color', typeColor);
 
-    const badge = document.createElement('span');
-    badge.className = `card-rarity-badge ${card.rarity}`;
-    badge.textContent = RARITY_LABELS[card.rarity] ?? card.rarity;
-    front.appendChild(badge);
+    if (card.rarity === 'MISS') {
+      front.innerHTML = `
+        <div class="card-miss-body">
+          <span class="card-miss-text">꽝</span>
+          <p>다음엔 뽑혀요!</p>
+        </div>`;
+    } else {
+      const stage = getStage(card);
+      const grade = getRarityLine(card.rarity);
+      const energy = '●'.repeat(card.energy || 1);
+      const total = getCardCount();
 
-    const header = document.createElement('div');
-    header.className = 'card-header';
-    header.innerHTML = `
-      <div>
-        <div class="card-name">${esc(card.name)}</div>
-        <div class="card-subtitle">${esc(card.subtitle)}</div>
-      </div>
-      ${card.rarity !== 'MISS' ? `<div class="card-hp">${card.hp}</div>` : ''}
-    `;
-    front.appendChild(header);
+      front.innerHTML = `
+        <div class="card-stage-row">
+          <span class="card-stage">${esc(stage)}</span>
+          <span class="card-type-badge" style="background:${typeColor}">${esc(card.type)}</span>
+        </div>
+        <div class="card-name-row">
+          <span class="card-name">${esc(card.name)}</span>
+          <span class="card-hp"><small>HP</small> ${card.hp}</span>
+        </div>
+        <div class="card-art-box">
+          <img src="${esc(card.image)}" alt="${esc(card.name)}" loading="lazy" decoding="async">
+        </div>
+        <div class="card-attack-row">
+          <span class="card-energy">${energy}</span>
+          <span class="card-attack-name">${esc(card.attack)}</span>
+          <span class="card-attack-dmg">${card.damage}</span>
+        </div>
+        <p class="card-flavor">${esc(card.desc)}</p>
+        <div class="card-footer-row">
+          <span class="card-rarity-mark rarity-${card.rarity}">${grade}</span>
+          <span class="card-no">${card.no || '?'}/${String(total).padStart(3, '0')}</span>
+        </div>`;
 
-    const imgWrap = document.createElement('div');
-    imgWrap.className = 'card-image-wrap' + (card.rarity === 'MISS' ? ' miss' : '');
-
-    if (card.image) {
-      const img = document.createElement('img');
-      img.src = card.image;
-      img.alt = card.name;
-      img.loading = 'lazy';
-      if (card.filter && card.filter !== 'none') img.style.filter = card.filter;
-      img.onerror = () => { imgWrap.classList.add('miss'); img.remove(); };
-      imgWrap.appendChild(img);
+      const img = front.querySelector('img');
+      if (img) {
+        img.onerror = () => {
+          img.closest('.card-art-box').classList.add('art-fallback');
+          img.remove();
+        };
+      }
     }
-    front.appendChild(imgWrap);
-
-    if (card.rarity !== 'MISS') {
-      const attack = document.createElement('div');
-      attack.className = 'card-attack';
-      attack.innerHTML = `<strong>${esc(card.attack)}</strong> <span class="dmg">${card.damage}</span>`;
-      front.appendChild(attack);
-    }
-
-    const desc = document.createElement('div');
-    desc.className = 'card-desc';
-    desc.textContent = card.desc;
-    front.appendChild(desc);
 
     inner.appendChild(back);
     inner.appendChild(front);
@@ -129,18 +133,18 @@
     state.resolvedCards.forEach((card) => {
       const slot = document.createElement('div');
       slot.className = 'album-slot' + (state.owned.has(card.id) ? ' owned' : '');
-      slot.title = `${card.name} — ${card.subtitle}`;
+      slot.title = `${card.name} [${getRarityLine(card.rarity)}]`;
 
       if (state.owned.has(card.id)) {
         const img = document.createElement('img');
         img.src = card.image;
         img.alt = card.name;
-        if (card.filter && card.filter !== 'none') img.style.filter = card.filter;
         slot.appendChild(img);
-        const nameEl = document.createElement('div');
-        nameEl.className = 'slot-name';
-        nameEl.textContent = card.subtitle;
-        slot.appendChild(nameEl);
+
+        const gradeEl = document.createElement('div');
+        gradeEl.className = `slot-grade rarity-${card.rarity}`;
+        gradeEl.textContent = getRarityLine(card.rarity);
+        slot.appendChild(gradeEl);
       } else {
         const num = document.createElement('span');
         num.className = 'slot-num';
@@ -149,9 +153,8 @@
       }
 
       const badge = document.createElement('span');
-      badge.className = 'slot-rarity';
-      badge.style.background = RARITY_COLORS[card.rarity];
-      badge.textContent = card.rarity;
+      badge.className = `slot-rarity rarity-${card.rarity}`;
+      badge.textContent = RARITY_GRADE[card.rarity] || card.rarity;
       slot.appendChild(badge);
 
       if (card.custom) {
@@ -337,7 +340,7 @@
       const imgSrc = await resolveCardImage(card);
       row.innerHTML = `
         <img src="${imgSrc || ''}" alt="">
-        <span><b>${esc(card.subtitle)}</b> [${card.rarity}]</span>
+        <span><b>${esc(getRarityLine(card.rarity))}</b> ${esc(card.name)}</span>
         <button class="btn-del" data-id="${card.id}">삭제</button>
       `;
       list.appendChild(row);
