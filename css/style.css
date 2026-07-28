@@ -981,6 +981,55 @@ html, body {
 .result-cards .pokemon-card:nth-child(9) { animation-delay: 0.9s; }
 .result-cards .pokemon-card:nth-child(10) { animation-delay: 1.0s; }
 
+.result-summary {
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(212, 175, 55, 0.45);
+  border-radius: 12px;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.result-sum-title {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.82em;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 8px;
+}
+
+.result-sum-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.result-sum {
+  font-family: 'Noto Sans KR', 'Gowun Dodum', sans-serif;
+  font-size: 0.88em;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.result-sum b {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.15em;
+  margin-left: 2px;
+}
+
+.result-sum.rarity-UR { border-color: #FFD700; color: #FFE082; background: rgba(255, 215, 0, 0.12); }
+.result-sum.rarity-SR { border-color: #AB47BC; color: #E1BEE7; background: rgba(171, 71, 188, 0.15); }
+.result-sum.rarity-R { border-color: #29B6F6; color: #B3E5FC; background: rgba(41, 182, 246, 0.12); }
+.result-sum.rarity-BR { border-color: #7CB342; color: #DCEDC8; background: rgba(124, 179, 66, 0.12); }
+.result-sum.rarity-N { border-color: #B0BEC5; color: #ECEFF1; background: rgba(176, 190, 197, 0.12); }
+.result-sum.rarity-MISS { border-color: #78909C; color: #CFD8DC; background: rgba(120, 144, 156, 0.15); }
+
 @keyframes cardPop {
   0% { transform: scale(0); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }

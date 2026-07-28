@@ -406,6 +406,24 @@
     });
   }
 
+  function buildResultSummaryHtml(results) {
+    const order = ['UR', 'SR', 'R', 'BR', 'N', 'MISS'];
+    const counts = {};
+    results.forEach((c) => {
+      counts[c.rarity] = (counts[c.rarity] || 0) + 1;
+    });
+    const items = order
+      .filter((r) => counts[r] > 0)
+      .map((r) => {
+        const label = r === 'MISS' ? '꽝' : (RARITY_GRADE[r] || r);
+        const sym = RARITY_SYMBOL[r] || '';
+        return `<span class="result-sum rarity-${r}">${sym} ${label} <b>${counts[r]}</b>장</span>`;
+      });
+    return items.length
+      ? `<p class="result-sum-title">등급별 결과</p><div class="result-sum-row">${items.join('')}</div>`
+      : '';
+  }
+
   function showMultiReveal(results, sub = '') {
     return new Promise((resolve) => {
       const stage = $('#resultStage');
@@ -427,6 +445,8 @@
       else if (srCount) title += ` ⚔ 대장군 ${srCount}장!`;
       $('#resultTitle').textContent = title;
       $('#resultSub').textContent = sub;
+      const summaryEl = $('#resultSummary');
+      if (summaryEl) summaryEl.innerHTML = buildResultSummaryHtml(results);
 
       stage.classList.remove('hidden');
       const close = () => {
