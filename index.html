@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="site-version" content="20260728-4">
+  <meta name="site-version" content="20260728-6">
   <title>삼국지 유설아 카드뽑기</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,10 +25,6 @@
         <h1><span class="gold">삼국지</span> <span class="red">유설아</span> 카드뽑기</h1>
         <p class="subtitle">유설아♡ 삼국지 장수 카드 컬렉션</p>
       </div>
-      <div class="stats-box">
-        <div class="stat"><span class="label">보유 코인</span><span id="coinCount" class="value">1000</span></div>
-        <div class="stat"><span class="label">수집</span><span id="collectCount" class="value">0/12</span></div>
-      </div>
     </header>
 
     <main id="main">
@@ -46,17 +42,18 @@
         </div>
 
         <div class="gacha-buttons">
-          <button id="btnSingle" class="btn btn-primary">⚔ 1뽑 <small>(100)</small></button>
-          <button id="btnTen" class="btn btn-accent">🏯 10뽑 <small>(900)</small></button>
-          <button id="btnTwenty" class="btn btn-gold">👑 20뽑 <small>(1700)</small></button>
+          <button id="btnSingle" class="btn btn-primary">⚔ 1뽑</button>
+          <button id="btnTen" class="btn btn-accent">🏯 10뽑</button>
+          <button id="btnTwenty" class="btn btn-gold">👑 20뽑</button>
         </div>
 
         <div class="rate-info">
-          <span class="rate ur">금 ★★ 1%</span>
-          <span class="rate sr">자 ★ 5%</span>
-          <span class="rate r">청 ◆ 15%</span>
-          <span class="rate n">백 ● 50%</span>
-          <span class="rate miss">꽝 29%</span>
+          <span class="rate ur">왕 ★★ 0.1%</span>
+          <span class="rate sr">대장군 ★ 1%</span>
+          <span class="rate r">장수 ◆ 5%</span>
+          <span class="rate br">백인장 ◇ 15%</span>
+          <span class="rate n">병사 ● 50%</span>
+          <span class="rate miss">꽝 28.9%</span>
         </div>
       </section>
 
@@ -68,7 +65,7 @@
 
     <footer id="toolbar">
       <button id="btnSound" class="tool-btn" title="효과음">🔊</button>
-      <button id="btnReset" class="tool-btn" title="코인 초기화">🔄</button>
+      <button id="btnReset" class="tool-btn hidden" title="컬렉션 리셋">🔄</button>
       <button id="btnSettings" class="tool-btn" title="설정">⚙</button>
     </footer>
   </div>
@@ -80,6 +77,10 @@
       <h2 id="resultTitle">뽑기 결과!</h2>
       <p id="resultSub" class="result-sub"></p>
       <div id="resultCards" class="result-cards"></div>
+      <div id="resultResetBar" class="reset-bar hidden">
+        <p class="reset-msg">👑 왕 등장! 컬렉션을 리셋할 수 있어요</p>
+        <button id="btnResultReset" class="btn btn-gold" type="button">🔄 리셋하기</button>
+      </div>
       <p class="tap-hint">화면을 누르면 닫혀요</p>
     </div>
   </div>
@@ -88,6 +89,10 @@
     <div class="dim"></div>
     <div id="revealCard" class="reveal-wrap"></div>
     <p id="revealSub" class="tap-hint"></p>
+    <div id="revealResetBar" class="reset-bar hidden">
+      <p class="reset-msg">👑 왕 등장! 컬렉션을 리셋할 수 있어요</p>
+      <button id="btnRevealReset" class="btn btn-gold" type="button">🔄 리셋하기</button>
+    </div>
     <p class="tap-hint">화면을 누르면 닫혀요</p>
   </div>
 
@@ -102,8 +107,7 @@
 
       <div id="tabGeneral" class="tab-panel active">
         <h2>⚙ 일반 설정</h2>
-        <label>보유 코인<input type="number" id="settingCoins" value="1000" min="0" max="99999"></label>
-        <label>1뽑 가격<input type="number" id="settingSingleCost" value="100" min="1"></label>
+        <p class="modal-note">뽑기는 무료입니다. <strong>왕</strong> 등급이 나오면 컬렉션을 리셋할 수 있어요.</p>
       </div>
 
       <div id="tabCards" class="tab-panel">
@@ -115,10 +119,11 @@
           <label>부제<input type="text" id="cardSubtitle" placeholder="예: 생일 축하" maxlength="20"></label>
           <label>등급
             <select id="cardRarity">
-              <option value="N">백 — 일반</option>
-              <option value="R" selected>청 — 고급</option>
-              <option value="SR">자 — 희귀</option>
-              <option value="UR">금 — 명장</option>
+              <option value="N">병사</option>
+              <option value="BR">백인장</option>
+              <option value="R" selected>장수</option>
+              <option value="SR">대장군</option>
+              <option value="UR">왕</option>
             </select>
           </label>
           <label>전법 이름<input type="text" id="cardAttack" value="특별 전법"></label>

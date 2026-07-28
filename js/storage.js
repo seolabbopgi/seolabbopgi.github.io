@@ -109,7 +109,7 @@ async function addCustomCard(meta, file) {
     custom: true,
     holo: meta.rarity === 'UR' || meta.rarity === 'SR',
     lord: meta.rarity === 'UR',
-    mark: meta.rarity === 'UR' ? '금' : meta.rarity === 'SR' ? '자' : '',
+    mark: { UR: '왕', SR: '대장', R: '장', BR: '백', N: '' }[meta.rarity] || '',
     artist: 'Custom',
     retreat: meta.rarity === 'UR' ? 1 : 2,
   };

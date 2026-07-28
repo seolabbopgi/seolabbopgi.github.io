@@ -4,10 +4,9 @@
   const STORAGE_KEY = 'yuseola-gacha-save';
 
   const state = {
-    coins: 1000,
     owned: new Set(),
     soundOn: true,
-    costs: { single: 100, ten: 900, twenty: 1700 },
+    resetUnlocked: false,
     pulling: false,
     resolvedCards: [],
   };
@@ -17,10 +16,9 @@
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      coins: state.coins,
       owned: [...state.owned],
       soundOn: state.soundOn,
-      costs: state.costs,
+      resetUnlocked: state.resetUnlocked,
     }));
   }
 
@@ -29,10 +27,9 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const data = JSON.parse(raw);
-      state.coins = data.coins ?? 1000;
       state.owned = new Set(data.owned ?? []);
       state.soundOn = data.soundOn ?? true;
-      if (data.costs) Object.assign(state.costs, data.costs);
+      state.resetUnlocked = data.resetUnlocked ?? false;
     } catch (_) { /* ignore */ }
   }
 
@@ -41,12 +38,31 @@
   }
 
   function updateUI() {
-    $('#coinCount').textContent = state.coins.toLocaleString();
-    $('#collectCount').textContent = `${state.owned.size}/${getCardCount()}`;
     $('#btnSound').textContent = state.soundOn ? '🔊' : '🔇';
-    $('#btnSingle small').textContent = `(${state.costs.single})`;
-    $('#btnTen small').textContent = `(${state.costs.ten})`;
-    $('#btnTwenty small').textContent = `(${state.costs.twenty})`;
+    $('#btnReset').classList.toggle('hidden', !state.resetUnlocked);
+  }
+
+  function unlockReset() {
+    state.resetUnlocked = true;
+    save();
+    updateUI();
+  }
+
+  async function resetCollection() {
+    if (!state.resetUnlocked) return;
+    if (!confirm('수집한 카드를 모두 초기화할까요?\n(장수 도감이 비워집니다)')) return;
+    state.owned.clear();
+    state.resetUnlocked = false;
+    save();
+    updateUI();
+    await renderAlbum();
+    $('#resultStage').classList.add('hidden');
+    $('#cardReveal').classList.add('hidden');
+  }
+
+  function showResetBars(hasKing) {
+    $('#revealResetBar')?.classList.toggle('hidden', !hasKing);
+    $('#resultResetBar')?.classList.toggle('hidden', !hasKing);
   }
 
   function createCardElement(card) {
@@ -166,20 +182,10 @@
     Sfx.play(map[type] ?? 'pull');
   }
 
-  async function doGacha(count, cost, { free = false, donor = '' } = {}) {
+  async function doGacha(count, { donor = '' } = {}) {
     if (state.pulling) return false;
-    if (!free && state.coins < cost) {
-      alert('코인이 부족합니다! 🪙');
-      return false;
-    }
 
     state.pulling = true;
-    if (!free) {
-      state.coins -= cost;
-      save();
-      updateUI();
-    }
-
     await refreshCards();
 
     const pack = $('#pack');
@@ -202,13 +208,15 @@
     await renderAlbum();
 
     const donorLabel = donor ? ` — ${donor}` : '';
+    const hasKing = results.some((c) => c.rarity === 'UR');
+    if (hasKing) unlockReset();
 
     if (count === 1) {
       const card = results[0];
       playSound(card.rarity === 'UR' ? 'ur' : card.rarity === 'SR' ? 'sr' : card.rarity === 'R' ? 'r' : card.rarity === 'MISS' ? 'miss' : 'n');
-      await showSingleReveal(card, donorLabel);
+      await showSingleReveal(card, donorLabel, hasKing);
     } else {
-      await showMultiReveal(results, donorLabel);
+      await showMultiReveal(results, donorLabel, hasKing);
     }
 
     state.pulling = false;
@@ -238,7 +246,7 @@
     setTimeout(() => el.remove(), 600);
   }
 
-  function showSingleReveal(card, sub = '') {
+  function showSingleReveal(card, sub = '', hasKing = false) {
     return new Promise((resolve) => {
       const stage = $('#cardReveal');
       const wrap = $('#revealCard');
@@ -247,8 +255,10 @@
       if (card.rarity === 'UR') flashScreen('ur');
       else if (card.rarity === 'SR') flashScreen('sr');
       $('#revealSub').textContent = sub;
+      showResetBars(hasKing || card.rarity === 'UR');
       stage.classList.remove('hidden');
-      const close = () => {
+      const close = (e) => {
+        if (e?.target?.closest?.('.reset-bar button')) return;
         stage.classList.add('hidden');
         stage.removeEventListener('click', close);
         resolve();
@@ -257,14 +267,14 @@
     });
   }
 
-  function showMultiReveal(results, sub = '') {
+  function showMultiReveal(results, sub = '', hasKing = false) {
     return new Promise((resolve) => {
       const stage = $('#resultStage');
       const container = $('#resultCards');
       container.innerHTML = '';
 
       const best = results.reduce((a, b) => {
-        const order = { UR: 5, SR: 4, R: 3, N: 2, MISS: 1 };
+        const order = { UR: 6, SR: 5, R: 4, BR: 3, N: 2, MISS: 1 };
         return (order[a.rarity] ?? 0) >= (order[b.rarity] ?? 0) ? a : b;
       });
       playSound(best.rarity === 'UR' ? 'ur' : best.rarity === 'SR' ? 'sr' : 'pull');
@@ -274,13 +284,15 @@
       const urCount = results.filter((c) => c.rarity === 'UR').length;
       const srCount = results.filter((c) => c.rarity === 'SR').length;
       let title = `${results.length}연차 결과!`;
-      if (urCount) title += ` 🌟 UR ${urCount}장!`;
-      else if (srCount) title += ` ✨ SR ${srCount}장!`;
+      if (urCount) title += ` 👑 왕 ${urCount}장!`;
+      else if (srCount) title += ` ⚔ 대장군 ${srCount}장!`;
       $('#resultTitle').textContent = title;
       $('#resultSub').textContent = sub;
+      showResetBars(hasKing);
 
       stage.classList.remove('hidden');
-      const close = () => {
+      const close = (e) => {
+        if (e?.target?.closest?.('.reset-bar button')) return;
         stage.classList.add('hidden');
         stage.removeEventListener('click', close);
         resolve();
@@ -335,10 +347,10 @@
   }
 
   function bindEvents() {
-    $('#btnSingle').addEventListener('click', () => doGacha(1, state.costs.single));
-    $('#btnTen').addEventListener('click', () => doGacha(10, state.costs.ten));
-    $('#btnTwenty').addEventListener('click', () => doGacha(20, state.costs.twenty));
-    $('#pack').addEventListener('click', () => doGacha(1, state.costs.single));
+    $('#btnSingle').addEventListener('click', () => doGacha(1));
+    $('#btnTen').addEventListener('click', () => doGacha(10));
+    $('#btnTwenty').addEventListener('click', () => doGacha(20));
+    $('#pack').addEventListener('click', () => doGacha(1));
 
     $('#btnSound').addEventListener('click', () => {
       state.soundOn = !state.soundOn;
@@ -346,17 +358,17 @@
       save();
     });
 
-    $('#btnReset').addEventListener('click', () => {
-      if (confirm('코인을 1000으로 초기화할까요? (수집 기록 유지)')) {
-        state.coins = 1000;
-        save();
-        updateUI();
-      }
+    $('#btnReset').addEventListener('click', () => resetCollection());
+    $('#btnRevealReset').addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetCollection();
+    });
+    $('#btnResultReset').addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetCollection();
     });
 
     $('#btnSettings').addEventListener('click', () => {
-      $('#settingCoins').value = state.coins;
-      $('#settingSingleCost').value = state.costs.single;
       renderCustomCardList();
       $('#settingsModal').classList.remove('hidden');
     });
@@ -366,12 +378,6 @@
     });
 
     $('#btnSaveSettings').addEventListener('click', () => {
-      state.coins = parseInt($('#settingCoins').value, 10) || 0;
-      state.costs.single = parseInt($('#settingSingleCost').value, 10) || 100;
-      state.costs.ten = Math.floor(state.costs.single * 9);
-      state.costs.twenty = Math.floor(state.costs.single * 17);
-      save();
-      updateUI();
       $('#settingsModal').classList.add('hidden');
     });
 
@@ -439,7 +445,7 @@
     SoopBridge.init({
       onAutoPull: async (nick, count) => {
         SoopBridge.toast(`${nick} 님 ${count}연차 시작!`, true);
-        await doGacha(count, 0, { free: true, donor: nick });
+        await doGacha(count, { donor: nick });
       },
     });
   }
