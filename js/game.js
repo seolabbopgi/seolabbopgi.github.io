@@ -6,6 +6,7 @@
 
   const state = {
     history: [],
+    deck: [],
     soundOn: true,
     pulling: false,
     resolvedCards: [],
@@ -30,6 +31,7 @@
   function save() {
     const payload = JSON.stringify({
       history: state.history.map(compactHistoryEntry),
+      deck: state.deck,
       soundOn: state.soundOn,
     });
 
@@ -45,6 +47,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           history: state.history.map(compactHistoryEntry),
+          deck: state.deck,
           soundOn: state.soundOn,
         }));
         return;
@@ -57,7 +60,10 @@
   function load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
+      if (!raw) {
+        state.deck = buildFreshDeck();
+        return;
+      }
       const data = JSON.parse(raw);
       state.history = Array.isArray(data.history)
         ? data.history.filter((h) => {
@@ -67,7 +73,17 @@
         }).map(compactHistoryEntry)
         : [];
       state.soundOn = data.soundOn ?? true;
+      if (Array.isArray(data.deck) && data.deck.length) {
+        state.deck = data.deck;
+      } else {
+        state.deck = deckFromRemainingCounts(remainingCountsFromHistory(state.history));
+      }
     } catch (_) { /* ignore */ }
+    if (!state.deck.length) state.deck = buildFreshDeck();
+  }
+
+  function initDeck() {
+    state.deck = buildFreshDeck();
   }
 
   function fallbackCardPool() {
@@ -96,9 +112,13 @@
     $('#btnSound').textContent = state.soundOn ? '🔊' : '🔇';
     const countEl = $('#historyCount');
     if (countEl) {
-      countEl.textContent = state.history.length
-        ? `총 ${state.history.length}장`
-        : '아직 뽑은 카드가 없어요';
+      if (!state.history.length && state.deck.length === CARD_SET_TOTAL) {
+        countEl.textContent = `100장 덱 · 아직 뽑은 카드가 없어요`;
+      } else if (state.history.length) {
+        countEl.textContent = `총 ${state.history.length}장 · 남은 ${state.deck.length}장`;
+      } else {
+        countEl.textContent = `남은 ${state.deck.length}장`;
+      }
     }
   }
 
@@ -109,6 +129,7 @@
     }
     if (!confirm('나온 내역을 모두 초기화할까요?')) return;
     state.history = [];
+    initDeck();
     save();
     updateUI();
     await renderHistory();
@@ -273,20 +294,8 @@
     updateUI();
   }
 
-  function rollRarity() {
-    const roll = Math.random() * 100;
-    let cumulative = 0;
-    for (const [rarity, weight] of Object.entries(RARITY_WEIGHTS)) {
-      cumulative += weight;
-      if (roll < cumulative) return rarity;
-    }
-    return 'MISS';
-  }
-
-  function rollCard() {
-    const rarity = rollRarity();
+  function cardFromRarity(rarity) {
     if (rarity === 'MISS') return { ...MISS_CARD };
-
     const pool = state.resolvedCards.filter((c) => c.rarity === rarity);
     if (!pool.length) return { ...MISS_CARD };
     return { ...pool[Math.floor(Math.random() * pool.length)] };
@@ -294,7 +303,12 @@
 
   function pull(count) {
     const results = [];
-    for (let i = 0; i < count; i++) results.push(rollCard());
+    const draws = Math.min(count, state.deck.length);
+    for (let i = 0; i < draws; i++) {
+      const idx = Math.floor(Math.random() * state.deck.length);
+      const rarity = state.deck.splice(idx, 1)[0];
+      results.push(cardFromRarity(rarity));
+    }
     return results;
   }
 
@@ -310,6 +324,10 @@
     await refreshCards();
     if (!state.resolvedCards.length) {
       alert('뽑기 카드를 불러오지 못했습니다. 설정에서 카드를 추가하거나, 잠시 후 다시 시도해 주세요.');
+      return false;
+    }
+    if (!state.deck.length) {
+      alert('100장을 모두 뽑았습니다. 🔄 리셋 후 다시 뽑을 수 있어요.');
       return false;
     }
 
@@ -328,6 +346,14 @@
       pack.classList.remove('opening');
 
       const results = pull(count);
+      if (!results.length) {
+        alert('100장을 모두 뽑았습니다. 🔄 리셋 후 다시 뽑을 수 있어요.');
+        return false;
+      }
+      if (results.length < count) {
+        alert(`남은 카드가 ${results.length}장뿐이라 ${results.length}장만 뽑았어요.`);
+      }
+
       addToHistory(results, donor);
       save();
       updateUI();

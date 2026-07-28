@@ -297,6 +297,14 @@ html, body {
 .rate.n { color: #333; background: #ECEFF1; border-color: var(--n); }
 .rate.miss { color: #fff; background: var(--miss); border-color: var(--miss); }
 
+.deck-note {
+  text-align: center;
+  font-size: 0.82em;
+  color: var(--sg-gold-light);
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
 /* ===== 삼국지 풀아트 장수 카드 ===== */
 .pokemon-card {
   width: 200px;

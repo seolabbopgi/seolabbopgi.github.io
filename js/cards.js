@@ -14,7 +14,43 @@ const RARITY_SYMBOL = { N: '●', BR: '◇', R: '◆', SR: '★', UR: '★★', 
 const RARITY_GRADE = { N: '병사', BR: '백인장', R: '장수', SR: '대장군', UR: '왕', MISS: '—' };
 const RARITY_MARK = { N: '', BR: '백', R: '장', SR: '대장', UR: '왕', MISS: '' };
 const STAGE_LABEL = { N: '병사', BR: '백인장', R: '장수', SR: '대장군', UR: '왕', MISS: '' };
-const CARD_SET_TOTAL = 200;
+const CARD_SET_TOTAL = 100;
+
+/** 100장 덱 구성 (총 100장) */
+const DECK_COMPOSITION = { UR: 1, SR: 3, R: 8, BR: 15, N: 30, MISS: 43 };
+
+function shuffleDeck(deck) {
+  const arr = deck.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildFreshDeck() {
+  const deck = [];
+  for (const [rarity, count] of Object.entries(DECK_COMPOSITION)) {
+    for (let i = 0; i < count; i++) deck.push(rarity);
+  }
+  return shuffleDeck(deck);
+}
+
+function remainingCountsFromHistory(history) {
+  const remaining = { ...DECK_COMPOSITION };
+  history.forEach((entry) => {
+    if (remaining[entry.rarity] > 0) remaining[entry.rarity]--;
+  });
+  return remaining;
+}
+
+function deckFromRemainingCounts(counts) {
+  const deck = [];
+  for (const [rarity, count] of Object.entries(counts)) {
+    for (let i = 0; i < count; i++) deck.push(rarity);
+  }
+  return shuffleDeck(deck);
+}
 
 function getStage(card) {
   return card.stage || STAGE_LABEL[card.rarity] || '병사';
@@ -137,6 +173,6 @@ const MISS_CARD = {
   id: 'miss', name: '꽝', rarity: 'MISS', type: '—', hp: 0, image: null, no: '—',
 };
 
-const RARITY_WEIGHTS = { UR: 0.1, SR: 1, R: 5, BR: 15, N: 50, MISS: 28.9 };
+const RARITY_DECK_INFO = { UR: '1장', SR: '3장', R: '8장', BR: '15장', N: '30장', MISS: '43장' };
 const RARITY_LABELS = { UR: '왕', SR: '대장군', R: '장수', BR: '백인장', N: '병사', MISS: '—' };
 const RARITY_COLORS = { UR: '#FFD700', SR: '#7B1FA2', R: '#1565C0', BR: '#558B2F', N: '#B0BEC5', MISS: '#78909C' };
