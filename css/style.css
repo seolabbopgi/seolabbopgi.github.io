@@ -723,16 +723,30 @@ html, body {
   animation: holoShift 2.5s infinite;
 }
 
-/* ===== 도감 ===== */
-.album-grid {
+/* ===== 나온 내역 ===== */
+.history-count {
+  font-size: 0.85em;
+  color: #666;
+  margin: -6px 0 10px;
+}
+
+.history-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #999;
+  padding: 24px 12px;
+  font-size: 0.9em;
+}
+
+.history-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 10px;
 }
 
-.album-slot {
+.history-slot {
   aspect-ratio: 63/88;
-  border: 3px dashed #bbb;
+  border: 3px solid #bbb;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -744,15 +758,14 @@ html, body {
   transition: transform 0.15s;
 }
 
-.album-slot:hover { transform: scale(1.05); }
-.album-slot.owned {
-  border-style: solid;
-  border-width: 3px;
-  border-color: #C9A227;
-  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+.history-slot.rarity-MISS {
+  border-style: dashed;
+  background: linear-gradient(165deg, #eee, #ddd);
 }
 
-.album-slot.owned img {
+.history-slot:hover { transform: scale(1.05); }
+
+.history-slot img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -761,13 +774,13 @@ html, body {
   -webkit-filter: none !important;
 }
 
-.album-slot .slot-num {
+.history-slot .slot-num {
   font-family: 'Jua', sans-serif;
   font-size: 1.2em;
-  color: #ccc;
+  color: #999;
 }
 
-.album-slot .slot-rarity {
+.history-slot .slot-rarity {
   position: absolute;
   top: 3px;
   right: 3px;
@@ -784,8 +797,9 @@ html, body {
 .slot-rarity.rarity-R { background: #0288D1; }
 .slot-rarity.rarity-SR { background: #8E24AA; }
 .slot-rarity.rarity-UR { background: linear-gradient(135deg, #FFD700, #FF8F00); color: #333; }
+.slot-rarity.rarity-MISS { background: #607D8B; }
 
-.album-slot .slot-grade {
+.history-slot .slot-grade {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -799,11 +813,12 @@ html, body {
   letter-spacing: 1px;
 }
 
-.album-slot .slot-grade.rarity-UR { color: #FFE082; }
-.album-slot .slot-grade.rarity-SR { color: #E1BEE7; }
-.album-slot .slot-grade.rarity-R { color: #81D4FA; }
-.album-slot .slot-grade.rarity-N { color: #CFD8DC; }
-.album-slot .slot-grade.rarity-BR { color: #C5E1A5; }
+.history-slot .slot-grade.rarity-UR { color: #FFE082; }
+.history-slot .slot-grade.rarity-SR { color: #E1BEE7; }
+.history-slot .slot-grade.rarity-R { color: #81D4FA; }
+.history-slot .slot-grade.rarity-N { color: #CFD8DC; }
+.history-slot .slot-grade.rarity-BR { color: #C5E1A5; }
+.history-slot .slot-grade.rarity-MISS { color: #B0BEC5; }
 
 /* ===== 결과 스테이지 ===== */
 .stage {

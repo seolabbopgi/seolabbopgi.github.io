@@ -2,9 +2,10 @@
   'use strict';
 
   const STORAGE_KEY = 'yuseola-gacha-save';
+  const HISTORY_LIMIT = 300;
 
   const state = {
-    owned: new Set(),
+    history: [],
     soundOn: true,
     resetUnlocked: false,
     pulling: false,
@@ -16,7 +17,7 @@
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      owned: [...state.owned],
+      history: state.history,
       soundOn: state.soundOn,
       resetUnlocked: state.resetUnlocked,
     }));
@@ -27,7 +28,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const data = JSON.parse(raw);
-      state.owned = new Set(data.owned ?? []);
+      state.history = Array.isArray(data.history) ? data.history : [];
       state.soundOn = data.soundOn ?? true;
       state.resetUnlocked = data.resetUnlocked ?? false;
     } catch (_) { /* ignore */ }
@@ -40,6 +41,12 @@
   function updateUI() {
     $('#btnSound').textContent = state.soundOn ? '🔊' : '🔇';
     $('#btnReset').classList.toggle('hidden', !state.resetUnlocked);
+    const countEl = $('#historyCount');
+    if (countEl) {
+      countEl.textContent = state.history.length
+        ? `총 ${state.history.length}장`
+        : '아직 뽑은 카드가 없어요';
+    }
   }
 
   function unlockReset() {
@@ -48,14 +55,44 @@
     updateUI();
   }
 
-  async function resetCollection() {
+  function snapshotCard(card, donor = '') {
+    return {
+      uid: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      id: card.id,
+      name: card.name,
+      rarity: card.rarity,
+      type: card.type,
+      hp: card.hp,
+      stage: card.stage,
+      image: card.image,
+      moves: card.moves,
+      holo: card.holo,
+      lord: card.lord,
+      mark: card.mark,
+      artist: card.artist,
+      retreat: card.retreat,
+      pulledAt: Date.now(),
+      donor: donor || '',
+    };
+  }
+
+  function addToHistory(cards, donor = '') {
+    cards.slice().reverse().forEach((card) => {
+      state.history.unshift(snapshotCard(card, donor));
+    });
+    if (state.history.length > HISTORY_LIMIT) {
+      state.history.length = HISTORY_LIMIT;
+    }
+  }
+
+  async function resetHistory() {
     if (!state.resetUnlocked) return;
-    if (!confirm('수집한 카드를 모두 초기화할까요?\n(장수 도감이 비워집니다)')) return;
-    state.owned.clear();
+    if (!confirm('나온 내역을 모두 초기화할까요?')) return;
+    state.history = [];
     state.resetUnlocked = false;
     save();
     updateUI();
-    await renderAlbum();
+    await renderHistory();
     $('#resultStage').classList.add('hidden');
     $('#cardReveal').classList.add('hidden');
   }
@@ -105,50 +142,55 @@
     }[c]));
   }
 
-  async function renderAlbum() {
-    await refreshCards();
-    const grid = $('#albumGrid');
+  async function renderHistory() {
+    const grid = $('#historyGrid');
+    if (!grid) return;
     grid.innerHTML = '';
 
-    state.resolvedCards.forEach((card) => {
-      const slot = document.createElement('div');
-      slot.className = 'album-slot' + (state.owned.has(card.id) ? ' owned' : '');
-      slot.title = `${card.name} [${getRarityLine(card.rarity)}]`;
+    if (!state.history.length) {
+      grid.innerHTML = '<p class="history-empty">뽑기를 시작하면 여기에 나온 카드가 쌓여요</p>';
+      updateUI();
+      return;
+    }
 
-      if (state.owned.has(card.id)) {
+    state.history.forEach((entry) => {
+      const slot = document.createElement('div');
+      slot.className = `history-slot rarity-${entry.rarity}`;
+
+      const badge = document.createElement('span');
+      badge.className = `slot-rarity rarity-${entry.rarity}`;
+      badge.textContent = RARITY_GRADE[entry.rarity] || entry.rarity;
+      slot.appendChild(badge);
+
+      if (entry.rarity === 'MISS') {
+        const miss = document.createElement('span');
+        miss.className = 'slot-num';
+        miss.textContent = '꽝';
+        slot.appendChild(miss);
+      } else {
         const img = document.createElement('img');
-        img.src = card.image;
-        img.alt = card.name;
+        img.src = entry.image || '';
+        img.alt = entry.name;
+        img.loading = 'lazy';
         slot.appendChild(img);
 
         const gradeEl = document.createElement('div');
-        gradeEl.className = `slot-grade rarity-${card.rarity}`;
-        gradeEl.textContent = getRarityLine(card.rarity);
+        gradeEl.className = `slot-grade rarity-${entry.rarity}`;
+        gradeEl.textContent = getRarityLine(entry.rarity);
         slot.appendChild(gradeEl);
-      } else {
-        const num = document.createElement('span');
-        num.className = 'slot-num';
-        num.textContent = '?';
-        slot.appendChild(num);
       }
 
-      const badge = document.createElement('span');
-      badge.className = `slot-rarity rarity-${card.rarity}`;
-      badge.textContent = RARITY_GRADE[card.rarity] || card.rarity;
-      slot.appendChild(badge);
-
-      if (card.custom) {
-        const tag = document.createElement('span');
-        tag.className = 'slot-custom';
-        tag.textContent = '★';
-        slot.appendChild(tag);
-      }
+      slot.title = entry.donor
+        ? `${entry.name} [${getRarityLine(entry.rarity)}] — ${entry.donor}`
+        : `${entry.name} [${getRarityLine(entry.rarity)}]`;
 
       slot.addEventListener('click', () => {
-        if (state.owned.has(card.id)) showSingleReveal(card);
+        if (entry.rarity !== 'MISS') showSingleReveal(entry);
       });
       grid.appendChild(slot);
     });
+
+    updateUI();
   }
 
   function rollRarity() {
@@ -200,12 +242,10 @@
     pack.classList.remove('opening');
 
     const results = pull(count);
-    results.forEach((card) => {
-      if (card.rarity !== 'MISS') state.owned.add(card.id);
-    });
+    addToHistory(results, donor);
     save();
     updateUI();
-    await renderAlbum();
+    await renderHistory();
 
     const donorLabel = donor ? ` — ${donor}` : '';
     const hasKing = results.some((c) => c.rarity === 'UR');
@@ -225,18 +265,6 @@
 
   function sleep(ms) {
     return new Promise((r) => setTimeout(r, ms));
-  }
-
-  function waitForClose(stageId) {
-    return new Promise((resolve) => {
-      const stage = $(stageId);
-      const close = () => {
-        stage.classList.add('hidden');
-        stage.removeEventListener('click', close);
-        resolve();
-      };
-      stage.addEventListener('click', close);
-    });
   }
 
   function flashScreen(rarity) {
@@ -301,7 +329,6 @@
     });
   }
 
-  /* ===== 커스텀 카드 UI ===== */
   async function renderCustomCardList() {
     const list = $('#customCardList');
     if (!list) return;
@@ -326,9 +353,9 @@
       btn.addEventListener('click', async () => {
         if (!confirm('이 카드를 삭제할까요?')) return;
         await removeCustomCard(btn.dataset.id);
-        state.owned.delete(btn.dataset.id);
+        state.history = state.history.filter((h) => h.id !== btn.dataset.id);
         save();
-        await renderAlbum();
+        await renderHistory();
         await renderCustomCardList();
         updateUI();
       });
@@ -358,14 +385,14 @@
       save();
     });
 
-    $('#btnReset').addEventListener('click', () => resetCollection());
+    $('#btnReset').addEventListener('click', () => resetHistory());
     $('#btnRevealReset').addEventListener('click', (e) => {
       e.stopPropagation();
-      resetCollection();
+      resetHistory();
     });
     $('#btnResultReset').addEventListener('click', (e) => {
       e.stopPropagation();
-      resetCollection();
+      resetHistory();
     });
 
     $('#btnSettings').addEventListener('click', () => {
@@ -409,9 +436,8 @@
         $('#cardUploadForm').reset();
         $('#uploadPreview').textContent = '미리보기';
         $('#uploadPreview').style.backgroundImage = '';
-        await renderAlbum();
+        await refreshCards();
         await renderCustomCardList();
-        updateUI();
         alert('카드가 추가됐어요! 🎴');
       } catch (err) {
         alert(err.message || '추가 실패');
@@ -438,7 +464,7 @@
     load();
     await refreshCards();
     updateUI();
-    await renderAlbum();
+    await renderHistory();
     bindTabs();
     bindEvents();
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="site-version" content="20260728-6">
+  <meta name="site-version" content="20260729-1">
   <title>삼국지 유설아 카드뽑기</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,9 +57,10 @@
         </div>
       </section>
 
-      <section id="albumZone" class="panel">
-        <h2 class="panel-title">📜 장수 도감</h2>
-        <div id="albumGrid" class="album-grid"></div>
+      <section id="historyZone" class="panel">
+        <h2 class="panel-title">📋 나온 내역</h2>
+        <p id="historyCount" class="history-count"></p>
+        <div id="historyGrid" class="history-grid"></div>
       </section>
     </main>
 
@@ -78,7 +79,7 @@
       <p id="resultSub" class="result-sub"></p>
       <div id="resultCards" class="result-cards"></div>
       <div id="resultResetBar" class="reset-bar hidden">
-        <p class="reset-msg">👑 왕 등장! 컬렉션을 리셋할 수 있어요</p>
+        <p class="reset-msg">👑 왕 등장! 나온 내역을 리셋할 수 있어요</p>
         <button id="btnResultReset" class="btn btn-gold" type="button">🔄 리셋하기</button>
       </div>
       <p class="tap-hint">화면을 누르면 닫혀요</p>
@@ -90,7 +91,7 @@
     <div id="revealCard" class="reveal-wrap"></div>
     <p id="revealSub" class="tap-hint"></p>
     <div id="revealResetBar" class="reset-bar hidden">
-      <p class="reset-msg">👑 왕 등장! 컬렉션을 리셋할 수 있어요</p>
+      <p class="reset-msg">👑 왕 등장! 나온 내역을 리셋할 수 있어요</p>
       <button id="btnRevealReset" class="btn btn-gold" type="button">🔄 리셋하기</button>
     </div>
     <p class="tap-hint">화면을 누르면 닫혀요</p>
@@ -107,7 +108,7 @@
 
       <div id="tabGeneral" class="tab-panel active">
         <h2>⚙ 일반 설정</h2>
-        <p class="modal-note">뽑기는 무료입니다. <strong>왕</strong> 등급이 나오면 컬렉션을 리셋할 수 있어요.</p>
+        <p class="modal-note">뽑기는 무료입니다. <strong>왕</strong> 등급이 나오면 나온 내역을 리셋할 수 있어요.</p>
       </div>
 
       <div id="tabCards" class="tab-panel">
