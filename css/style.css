@@ -1011,6 +1011,13 @@ html, body {
 
 .tool-btn:hover { background: #555; }
 
+.tool-btn.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tool-btn.disabled:hover { background: #444; }
+
 /* ===== 설정 모달 ===== */
 .modal {
   position: fixed;

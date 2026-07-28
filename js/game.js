@@ -64,7 +64,13 @@
 
   function updateUI() {
     $('#btnSound').textContent = state.soundOn ? '🔊' : '🔇';
-    $('#btnReset').classList.toggle('hidden', !state.resetUnlocked);
+    const resetBtn = $('#btnReset');
+    if (resetBtn) {
+      resetBtn.classList.toggle('disabled', !state.resetUnlocked);
+      resetBtn.title = state.resetUnlocked
+        ? '나온 내역 리셋'
+        : '왕 등급 당첨 후 리셋 가능';
+    }
     const countEl = $('#historyCount');
     if (countEl) {
       countEl.textContent = state.history.length
@@ -110,7 +116,10 @@
   }
 
   async function resetHistory() {
-    if (!state.resetUnlocked) return;
+    if (!state.resetUnlocked) {
+      alert('👑 왕 등급이 나온 뒤에 리셋할 수 있어요.');
+      return;
+    }
     if (!confirm('나온 내역을 모두 초기화할까요?')) return;
     state.history = [];
     state.resetUnlocked = false;
