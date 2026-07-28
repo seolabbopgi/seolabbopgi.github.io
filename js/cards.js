@@ -106,12 +106,6 @@ function buildCardFrontHTML(card, totalCards = CARD_SET_TOTAL) {
     ? `${escHtml(safeName.replace(/\s*覇$/i, '').replace(/\s*★$/i, ''))}<em class="lord-mark">覇</em>`
     : escHtml(safeName);
 
-  const lordRule = lord ? `
-    <div class="lord-rule-box">
-      <strong>명장 룰</strong>
-      <p>이 명장 카드가 전멸하면, 상대는 승점 2점을 획득한다.</p>
-    </div>` : '';
-
   return `
     <div class="card-fullart${holo ? ' holo-art' : ''}">
       <img src="${escHtml(card.image || '')}" alt="${escHtml(safeName)}" loading="lazy" decoding="async">
@@ -133,7 +127,6 @@ function buildCardFrontHTML(card, totalCards = CARD_SET_TOTAL) {
         <span class="illus">Illus. ${escHtml(artist)}</span>
         <span class="card-reg">${no}${mark ? ` ${mark}` : ''}</span>
       </div>
-      ${lordRule}
     </div>`;
 }
 

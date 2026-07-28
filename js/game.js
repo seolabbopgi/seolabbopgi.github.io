@@ -396,6 +396,8 @@
       if (card.rarity === 'UR') flashScreen('ur');
       else if (card.rarity === 'SR') flashScreen('sr');
       $('#revealSub').textContent = sub;
+      const summaryEl = $('#revealSummary');
+      if (summaryEl) summaryEl.innerHTML = buildResultSummaryHtml([card]);
       stage.classList.remove('hidden');
       const close = () => {
         stage.classList.add('hidden');
