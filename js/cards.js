@@ -24,7 +24,7 @@ const CARD_POOL = [
     damage: 25,
     desc: '궁디반장의 미소가 상대를 녹인다.',
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg',
-    filter: 'brightness(1.1) saturate(1.2)',
+    filter: 'none',
   },
   {
     id: 'yeveee-vworld',
@@ -50,7 +50,7 @@ const CARD_POOL = [
     damage: 50,
     desc: '게임 위주 방송! 케미 폭발!',
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg',
-    filter: 'hue-rotate(30deg) contrast(1.1)',
+    filter: 'none',
   },
   {
     id: 'yeveee-burger',
@@ -63,7 +63,7 @@ const CARD_POOL = [
     damage: 55,
     desc: '별명 궁디반장! 강력한 한 방!',
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg',
-    filter: 'sepia(0.3) saturate(1.4)',
+    filter: 'none',
   },
   {
     id: 'yeveee-burgercom',
@@ -76,7 +76,7 @@ const CARD_POOL = [
     damage: 60,
     desc: '버컴퍼니 멤버! 종합게임의 여왕!',
     image: 'https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png',
-    filter: 'hue-rotate(200deg) brightness(1.05)',
+    filter: 'none',
   },
   {
     id: 'yeveee-chur',
@@ -89,7 +89,7 @@ const CARD_POOL = [
     damage: 70,
     desc: '팬덤 츄르단의 사랑이 모인 카드!',
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg',
-    filter: 'hue-rotate(280deg) saturate(1.5) brightness(1.1)',
+    filter: 'none',
   },
   {
     id: 'yeveee-heupsung',
@@ -102,7 +102,7 @@ const CARD_POOL = [
     damage: 80,
     desc: '흡성 프레임 씌워진 전설의 순간!',
     image: 'https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png',
-    filter: 'hue-rotate(260deg) contrast(1.2) brightness(0.95)',
+    filter: 'none',
   },
   {
     id: 'yeveee-mark',
@@ -115,7 +115,7 @@ const CARD_POOL = [
     damage: 75,
     desc: '감체스터 마크 크루 출신! 블록도 부순다!',
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg',
-    filter: 'sepia(0.5) hue-rotate(40deg)',
+    filter: 'none',
   },
   {
     id: 'yeveee-legend',
@@ -128,7 +128,7 @@ const CARD_POOL = [
     damage: 120,
     desc: '★ 전설의 SOOP 스트리머 ★ 2018 데뷔!',
     image: 'https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png',
-    filter: 'saturate(1.6) brightness(1.15) contrast(1.1)',
+    filter: 'none',
     holo: true,
   },
   {
@@ -142,7 +142,7 @@ const CARD_POOL = [
     damage: 150,
     desc: '★★★ 최희귀 GOD 카드 ★★★',
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg',
-    filter: 'hue-rotate(45deg) saturate(2) brightness(1.2)',
+    filter: 'none',
     holo: true,
   },
   {
@@ -156,7 +156,7 @@ const CARD_POOL = [
     damage: 100,
     desc: '✨ 색이 다른 희귀 변이! ✨',
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg',
-    filter: 'hue-rotate(180deg) saturate(1.8) brightness(1.3)',
+    filter: 'none',
     holo: true,
   },
 ];
