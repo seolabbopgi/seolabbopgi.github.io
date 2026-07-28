@@ -28,7 +28,9 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const data = JSON.parse(raw);
-      state.history = Array.isArray(data.history) ? data.history : [];
+      state.history = Array.isArray(data.history)
+        ? data.history.filter((h) => h.rarity === 'MISS' || String(h.id).startsWith('custom-'))
+        : [];
       state.soundOn = data.soundOn ?? true;
       state.resetUnlocked = data.resetUnlocked ?? false;
     } catch (_) { /* ignore */ }
@@ -227,8 +229,13 @@
   async function doGacha(count, { donor = '' } = {}) {
     if (state.pulling) return false;
 
-    state.pulling = true;
     await refreshCards();
+    if (!state.resolvedCards.length) {
+      alert('⚙ 설정 → 카드 추가에서 카드를 먼저 등록해 주세요!');
+      return false;
+    }
+
+    state.pulling = true;
 
     const pack = $('#pack');
     pack.classList.add('shaking');
@@ -462,6 +469,7 @@
 
   async function init() {
     load();
+    save();
     await refreshCards();
     updateUI();
     await renderHistory();

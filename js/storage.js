@@ -68,8 +68,7 @@ async function resolveCardImage(card) {
 
 async function getAllCardsResolved() {
   const custom = loadCustomCards();
-  const all = [...CARD_POOL, ...custom];
-  const resolved = await Promise.all(all.map(async (c) => {
+  const resolved = await Promise.all(custom.map(async (c) => {
     const image = await resolveCardImage(c);
     return { ...c, image: image ?? c.image };
   }));
@@ -77,11 +76,11 @@ async function getAllCardsResolved() {
 }
 
 function getAllCardIds() {
-  return [...CARD_POOL, ...loadCustomCards()].map((c) => c.id);
+  return loadCustomCards().map((c) => c.id);
 }
 
 function getCardCount() {
-  return CARD_POOL.length + loadCustomCards().length;
+  return loadCustomCards().length;
 }
 
 async function addCustomCard(meta, file) {
@@ -92,12 +91,13 @@ async function addCustomCard(meta, file) {
   const imageId = 'img-' + Date.now();
   await saveImage(imageId, dataUrl);
 
+  const cards = loadCustomCards();
   const card = {
     id: 'custom-' + Date.now(),
     name: meta.name || '유설아',
-    stage: meta.stage || '기본',
+    stage: STAGE_LABEL[meta.rarity] || '병사',
     rarity: meta.rarity || 'R',
-    type: meta.type || '노말',
+    type: meta.type || '군',
     hp: +meta.hp || 100,
     moves: [{
       energy: [TYPE_ENERGY[meta.type || '군'] || 'bing', 'bing'],
@@ -112,9 +112,9 @@ async function addCustomCard(meta, file) {
     mark: { UR: '왕', SR: '대장', R: '장', BR: '백', N: '' }[meta.rarity] || '',
     artist: 'Custom',
     retreat: meta.rarity === 'UR' ? 1 : 2,
+    no: String(cards.length + 1).padStart(3, '0'),
   };
 
-  const cards = loadCustomCards();
   cards.push(card);
   saveCustomCards(cards);
   IMAGE_CACHE[imageId] = dataUrl;
