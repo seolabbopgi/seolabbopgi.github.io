@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>seolabbopgi — 츄르단 카드뽑기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- SOOP 연동 칩 -->
+  <div id="soopChip" title="숲 연동 설정">
+    <span class="dot">●</span>
+    <span id="soopChipText">숲 연동 꺼짐</span>
+  </div>
+  <div id="creditList"></div>
+  <div id="soopToast"></div>
+
+  <div id="app">
+    <header id="header">
+      <div class="title-box">
+        <h1><span class="blue">츄르</span><span class="red">단</span> 카드뽑기</h1>
+        <p class="subtitle">seolabbopgi · 유설아♡ 포켓몬 카드 컬렉션</p>
+      </div>
+      <div class="stats-box">
+        <div class="stat"><span class="label">보유 코인</span><span id="coinCount" class="value">1000</span></div>
+        <div class="stat"><span class="label">수집</span><span id="collectCount" class="value">0/12</span></div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section id="gachaZone" class="panel">
+        <div class="pack-display">
+          <div id="pack" class="pack" tabindex="0" role="button" aria-label="카드팩 열기">
+            <div class="pack-front">
+              <div class="pack-shine"></div>
+              <span class="pack-logo">♡</span>
+              <span class="pack-name">유설아</span>
+              <span class="pack-sub">SPECIAL PACK</span>
+            </div>
+          </div>
+          <p class="pack-hint">팩 클릭 또는 버튼으로 뽑기 · 후원자는 채팅 <strong>1 / 10 / 20</strong></p>
+        </div>
+
+        <div class="gacha-buttons">
+          <button id="btnSingle" class="btn btn-primary">🎴 1뽑 <small>(100)</small></button>
+          <button id="btnTen" class="btn btn-accent">🎲 10뽑 <small>(900)</small></button>
+          <button id="btnTwenty" class="btn btn-gold">🎰 20뽑 <small>(1700)</small></button>
+        </div>
+
+        <div class="rate-info">
+          <span class="rate ur">UR 1%</span>
+          <span class="rate sr">SR 5%</span>
+          <span class="rate r">R 15%</span>
+          <span class="rate n">N 50%</span>
+          <span class="rate miss">꽝 29%</span>
+        </div>
+      </section>
+
+      <section id="albumZone" class="panel">
+        <h2 class="panel-title">📖 카드 도감</h2>
+        <div id="albumGrid" class="album-grid"></div>
+      </section>
+    </main>
+
+    <footer id="toolbar">
+      <button id="btnSound" class="tool-btn" title="효과음">🔊</button>
+      <button id="btnReset" class="tool-btn" title="코인 초기화">🔄</button>
+      <button id="btnSettings" class="tool-btn" title="설정">⚙</button>
+    </footer>
+  </div>
+
+  <!-- 뽑기 결과 -->
+  <div id="resultStage" class="stage hidden">
+    <div class="dim"></div>
+    <div class="result-content">
+      <h2 id="resultTitle">뽑기 결과!</h2>
+      <p id="resultSub" class="result-sub"></p>
+      <div id="resultCards" class="result-cards"></div>
+      <p class="tap-hint">화면을 누르면 닫혀요</p>
+    </div>
+  </div>
+
+  <div id="cardReveal" class="stage hidden">
+    <div class="dim"></div>
+    <div id="revealCard" class="reveal-wrap"></div>
+    <p id="revealSub" class="tap-hint"></p>
+    <p class="tap-hint">화면을 누르면 닫혀요</p>
+  </div>
+
+  <!-- 설정 모달 (탭) -->
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-box modal-wide">
+      <div class="modal-tabs">
+        <button class="tab-btn active" data-tab="tabGeneral">일반</button>
+        <button class="tab-btn" data-tab="tabCards">카드 추가</button>
+        <button class="tab-btn" data-tab="tabSoop">숲 연동</button>
+      </div>
+
+      <div id="tabGeneral" class="tab-panel active">
+        <h2>⚙ 일반 설정</h2>
+        <label>보유 코인<input type="number" id="settingCoins" value="1000" min="0" max="99999"></label>
+        <label>1뽑 가격<input type="number" id="settingSingleCost" value="100" min="1"></label>
+      </div>
+
+      <div id="tabCards" class="tab-panel">
+        <h2>🖼 커스텀 카드 추가</h2>
+        <form id="cardUploadForm" class="upload-form">
+          <div class="upload-preview" id="uploadPreview">미리보기</div>
+          <input type="file" id="cardImageFile" accept="image/*" required>
+          <label>카드 이름<input type="text" id="cardName" value="유설아" maxlength="20"></label>
+          <label>부제<input type="text" id="cardSubtitle" placeholder="예: 생일 축하" maxlength="20"></label>
+          <label>등급
+            <select id="cardRarity">
+              <option value="N">N — 일반</option>
+              <option value="R" selected>R — 고급</option>
+              <option value="SR">SR — 희귀</option>
+              <option value="UR">UR — 전설</option>
+            </select>
+          </label>
+          <label>공격 이름<input type="text" id="cardAttack" value="특별 공격"></label>
+          <label>데미지<input type="number" id="cardDamage" value="50" min="0" max="999"></label>
+          <label>설명<input type="text" id="cardDesc" placeholder="카드 설명"></label>
+          <button type="submit" class="btn btn-primary">카드 추가</button>
+        </form>
+        <div id="customCardList" class="custom-card-list"></div>
+      </div>
+
+      <div id="tabSoop" class="tab-panel">
+        <h2>숲(SOOP) 방송 연동</h2>
+        <div id="soopStatus" class="soop-status-inline">연결되지 않음</div>
+        <label>스트리머 ID<input type="text" id="soopBjid" value="yeveee" placeholder="yeveee (테스트: demo)"></label>
+        <label>뽑기 기준 개수 <span class="hint">개당 1회 (100개=1회)</span>
+          <input type="number" id="soopUnit" min="1" value="100">
+        </label>
+        <div class="chk-row">
+          <label><input type="checkbox" id="soopBal" checked> 별풍선</label>
+          <label><input type="checkbox" id="soopAd" checked> 애드벌룬</label>
+          <label><input type="checkbox" id="soopCh" checked> 도전미션</label>
+          <label><input type="checkbox" id="soopBt" checked> 대결미션</label>
+        </div>
+        <details class="adv-details">
+          <summary>고급 — 중계 서버 주소</summary>
+          <label>서버 주소<input type="text" id="soopRelay" placeholder="wss://relay.hedasong.com"></label>
+        </details>
+        <p class="modal-note">
+          별풍선 후원 시 뽑기 횟수가 부여됩니다.<br>
+          시청자가 채팅으로 <strong>1</strong>, <strong>10</strong>, <strong>20</strong> (또는 N뽑)을 입력하면 자동 뽑기!
+        </p>
+        <button id="soopConnectBtn" class="btn btn-primary soop-connect-btn">연동 시작</button>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btnCloseSettings" class="btn">닫기</button>
+        <button id="btnSaveSettings" class="btn btn-primary">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOOP 패널 (칩 클릭용 빠른 접근) -->
+  <div id="soopBack" class="soop-back">
+    <div class="soop-panel">
+      <h2>숲(SOOP) 방송 연동</h2>
+      <p class="modal-note">설정 ⚙ → 숲 연동 탭에서 자세히 설정할 수 있어요.</p>
+      <p id="soopQuickStatus">연결되지 않음</p>
+      <div class="modal-actions">
+        <button id="soopCloseBtn" class="btn">닫기</button>
+        <button id="soopOpenSettings" class="btn btn-primary">설정 열기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/cards.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/soop.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

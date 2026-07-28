@@ -1,0 +1,931 @@
+:root {
+  --board-yellow: #F5C231;
+  --board-yellow-deep: #E8A81C;
+  --tab-blue: #1E4E9C;
+  --tab-blue-deep: #153A78;
+  --star-yellow: #FFDE59;
+  --sign-red: #E23A2E;
+  --paper-cream: #FFF7E2;
+  --ink: #3A2A18;
+  --shadow: rgba(60, 40, 0, 0.35);
+  --ur: #FFD700;
+  --sr: #C77DFF;
+  --r: #4CC9F0;
+  --n: #ADB5BD;
+  --miss: #6C757D;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  font-family: 'Gowun Dodum', 'Noto Sans KR', sans-serif;
+  background: #2b2b31;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 12px 70px;
+}
+
+/* ===== 헤더 ===== */
+#header {
+  background:
+    radial-gradient(ellipse at 30% 10%, rgba(255,255,255,.25), transparent 55%),
+    var(--board-yellow);
+  border: 5px solid #d99a12;
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.5), inset 0 0 40px rgba(180,120,0,.15);
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.title-box h1 {
+  font-family: 'Jua', sans-serif;
+  font-size: clamp(24px, 5vw, 36px);
+  letter-spacing: 1px;
+}
+
+.title-box h1 .blue { color: var(--tab-blue); text-shadow: 2px 2px 0 #fff; }
+.title-box h1 .red { color: var(--sign-red); text-shadow: 2px 2px 0 #fff; font-size: 1.15em; }
+.subtitle { font-size: 0.85em; color: #666; margin-top: 2px; }
+
+.stats-box {
+  display: flex;
+  gap: 16px;
+  background: #fff;
+  border: 3px solid #222;
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.stat { text-align: center; }
+.stat .label { display: block; font-size: 0.75em; color: #888; }
+.stat .value {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.4em;
+  color: var(--sign-red);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== 패널 ===== */
+.panel {
+  background: var(--paper-cream);
+  border: 4px solid #222;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.3);
+}
+
+.panel-title {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.2em;
+  margin-bottom: 12px;
+  color: var(--tab-blue);
+}
+
+/* ===== 카드팩 ===== */
+.pack-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 16px;
+}
+
+.pack {
+  width: 160px;
+  height: 224px;
+  perspective: 800px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.pack:hover { transform: scale(1.05) rotate(-2deg); }
+.pack.shaking { animation: packShake 0.5s ease-in-out; }
+.pack.opening { animation: packOpen 0.8s ease-in forwards; }
+
+@keyframes packShake {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(8deg); }
+  60% { transform: rotate(-5deg); }
+  80% { transform: rotate(5deg); }
+}
+
+@keyframes packOpen {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2) rotateY(90deg); }
+  100% { transform: scale(0) rotateY(180deg); opacity: 0; }
+}
+
+.pack-front {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #2a5fb4, var(--tab-blue) 55%, var(--tab-blue-deep));
+  border-radius: 12px;
+  border: 4px solid var(--star-yellow);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.2),
+    0 8px 24px rgba(0,0,0,.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pack-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,.25) 50%, transparent 60%);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+.pack-logo {
+  font-size: 3em;
+  color: var(--star-yellow);
+  text-shadow: 0 2px 8px rgba(0,0,0,.4);
+  z-index: 1;
+}
+
+.pack-name {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.5em;
+  color: #fff;
+  margin-top: 8px;
+  z-index: 1;
+}
+
+.pack-sub {
+  font-size: 0.7em;
+  color: var(--star-yellow);
+  letter-spacing: 2px;
+  margin-top: 4px;
+  z-index: 1;
+}
+
+.pack-hint {
+  font-size: 0.85em;
+  color: #888;
+}
+
+/* ===== 버튼 ===== */
+.gacha-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.btn {
+  font-family: 'Jua', sans-serif;
+  font-size: 1em;
+  padding: 10px 20px;
+  border: 3px solid #222;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+  background: #fff;
+  color: var(--ink);
+}
+
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn small { font-size: 0.7em; opacity: 0.7; }
+
+.btn-primary {
+  background: linear-gradient(160deg, #2a5fb4, var(--tab-blue));
+  color: #fff;
+  border-color: var(--tab-blue-deep);
+}
+
+.btn-accent {
+  background: linear-gradient(160deg, #e85, var(--sign-red));
+  color: #fff;
+  border-color: #a22;
+}
+
+.btn-gold {
+  background: linear-gradient(160deg, #ffe066, var(--board-yellow));
+  color: var(--ink);
+  border-color: #d99a12;
+}
+
+.rate-info {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 0.78em;
+}
+
+.rate {
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 2px solid;
+  font-family: 'Jua', sans-serif;
+}
+
+.rate.ur { color: var(--ur); border-color: var(--ur); }
+.rate.sr { color: var(--sr); border-color: var(--sr); }
+.rate.r { color: var(--r); border-color: var(--r); }
+.rate.n { color: var(--n); border-color: var(--n); }
+.rate.miss { color: var(--miss); border-color: var(--miss); }
+
+/* ===== 포켓몬 카드 ===== */
+.pokemon-card {
+  width: 200px;
+  aspect-ratio: 63/88;
+  border-radius: 12px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+
+.pokemon-card.flipped { transform: rotateY(180deg); }
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pokemon-card.revealing .card-inner { transform: rotateY(180deg); }
+
+.card-front, .card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.card-back {
+  background: linear-gradient(145deg, #1a3a7a, #0d2255);
+  border: 4px solid var(--star-yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-back::before {
+  content: '♡';
+  font-size: 4em;
+  color: var(--star-yellow);
+  opacity: 0.6;
+}
+
+.card-back::after {
+  content: '유설아';
+  position: absolute;
+  bottom: 20%;
+  font-family: 'Jua', sans-serif;
+  color: rgba(255,255,255,.5);
+  font-size: 0.9em;
+}
+
+.card-front {
+  transform: rotateY(180deg);
+  background: var(--paper-cream);
+  border: 4px solid #333;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+.card-front.rarity-UR { border-color: var(--ur); box-shadow: 0 0 20px rgba(255,215,0,.5); }
+.card-front.rarity-SR { border-color: var(--sr); box-shadow: 0 0 15px rgba(199,125,255,.4); }
+.card-front.rarity-R { border-color: var(--r); }
+.card-front.rarity-N { border-color: var(--n); }
+.card-front.rarity-MISS { border-color: var(--miss); background: #eee; }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #ccc;
+}
+
+.card-name {
+  font-family: 'Jua', sans-serif;
+  font-size: 0.95em;
+  color: var(--ink);
+}
+
+.card-hp {
+  font-family: 'Jua', sans-serif;
+  font-size: 0.85em;
+  color: var(--sign-red);
+}
+
+.card-hp::before { content: 'HP '; font-size: 0.7em; }
+
+.card-subtitle {
+  font-size: 0.65em;
+  color: #888;
+  margin-top: 1px;
+}
+
+.card-image-wrap {
+  flex: 1;
+  margin: 6px 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #e8f4fd, #b8dff9);
+  border: 2px solid #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 0;
+}
+
+.card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-image-wrap.miss {
+  background: repeating-linear-gradient(45deg, #ddd, #ddd 10px, #ccc 10px, #ccc 20px);
+}
+
+.card-image-wrap.miss::after {
+  content: '꽝';
+  font-family: 'Jua', sans-serif;
+  font-size: 2em;
+  color: #999;
+}
+
+.card-attack {
+  font-size: 0.72em;
+  padding: 4px 0;
+  border-top: 1px dashed #bbb;
+}
+
+.card-attack .dmg {
+  font-family: 'Jua', sans-serif;
+  color: var(--sign-red);
+  float: right;
+}
+
+.card-desc {
+  font-size: 0.58em;
+  color: #666;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.card-rarity-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-family: 'Jua', sans-serif;
+  font-size: 0.6em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: #fff;
+  z-index: 2;
+}
+
+.card-rarity-badge.UR { background: linear-gradient(135deg, #FFD700, #FFA500); color: #333; }
+.card-rarity-badge.SR { background: var(--sr); }
+.card-rarity-badge.R { background: var(--r); }
+.card-rarity-badge.N { background: var(--n); color: #333; }
+.card-rarity-badge.MISS { background: var(--miss); }
+
+/* 홀로그램 효과 */
+.pokemon-card.holo .card-front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    125deg,
+    transparent 30%,
+    rgba(255,0,128,.15) 40%,
+    rgba(0,255,255,.15) 50%,
+    rgba(255,255,0,.15) 60%,
+    transparent 70%
+  );
+  pointer-events: none;
+  animation: holoShift 3s infinite;
+}
+
+@keyframes holoShift {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ===== 도감 ===== */
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.album-slot {
+  aspect-ratio: 63/88;
+  border: 3px dashed #bbb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.album-slot:hover { transform: scale(1.05); }
+.album-slot.owned { border-style: solid; border-color: var(--tab-blue); }
+.album-slot.owned img { width: 100%; height: 100%; object-fit: cover; }
+
+.album-slot .slot-num {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.2em;
+  color: #ccc;
+}
+
+.album-slot .slot-rarity {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  font-size: 0.55em;
+  font-family: 'Jua', sans-serif;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: #fff;
+}
+
+.album-slot .slot-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  font-size: 0.55em;
+  text-align: center;
+  padding: 2px;
+}
+
+/* ===== 결과 스테이지 ===== */
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage.hidden { display: none; }
+
+.dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+}
+
+.result-content {
+  position: relative;
+  z-index: 101;
+  text-align: center;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.result-content h2 {
+  font-family: 'Jua', sans-serif;
+  color: #fff;
+  font-size: 1.6em;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 8px rgba(0,0,0,.5);
+}
+
+.result-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.result-cards .pokemon-card {
+  width: 140px;
+  animation: cardPop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
+.result-cards .pokemon-card:nth-child(1) { animation-delay: 0.1s; }
+.result-cards .pokemon-card:nth-child(2) { animation-delay: 0.2s; }
+.result-cards .pokemon-card:nth-child(3) { animation-delay: 0.3s; }
+.result-cards .pokemon-card:nth-child(4) { animation-delay: 0.4s; }
+.result-cards .pokemon-card:nth-child(5) { animation-delay: 0.5s; }
+.result-cards .pokemon-card:nth-child(6) { animation-delay: 0.6s; }
+.result-cards .pokemon-card:nth-child(7) { animation-delay: 0.7s; }
+.result-cards .pokemon-card:nth-child(8) { animation-delay: 0.8s; }
+.result-cards .pokemon-card:nth-child(9) { animation-delay: 0.9s; }
+.result-cards .pokemon-card:nth-child(10) { animation-delay: 1.0s; }
+
+@keyframes cardPop {
+  0% { transform: scale(0) rotateY(180deg); opacity: 0; }
+  100% { transform: scale(1) rotateY(0); opacity: 1; }
+}
+
+.tap-hint {
+  color: rgba(255,255,255,.6);
+  font-size: 0.85em;
+  margin-top: 16px;
+}
+
+.reveal-wrap {
+  position: relative;
+  z-index: 101;
+}
+
+.reveal-wrap .pokemon-card {
+  width: 240px;
+  animation: revealPop 0.8s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+@keyframes revealPop {
+  0% { transform: scale(0.2) rotateY(180deg); }
+  60% { transform: scale(1.1) rotateY(0); }
+  100% { transform: scale(1) rotateY(0); }
+}
+
+/* UR/SR 연출 */
+.flash-ur {
+  animation: flashGold 0.6s ease-out;
+}
+
+@keyframes flashGold {
+  0% { box-shadow: 0 0 0 rgba(255,215,0,0); }
+  50% { box-shadow: 0 0 80px rgba(255,215,0,.8); }
+  100% { box-shadow: 0 0 20px rgba(255,215,0,.5); }
+}
+
+/* ===== 툴바 ===== */
+#toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(43,43,49,.95);
+  border-top: 3px solid #444;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  z-index: 50;
+}
+
+.tool-btn {
+  font-size: 1.4em;
+  background: #444;
+  border: 2px solid #666;
+  border-radius: 10px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.tool-btn:hover { background: #555; }
+
+/* ===== 설정 모달 ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.5);
+}
+
+.modal.hidden { display: none; }
+
+.modal-box {
+  background: var(--paper-cream);
+  border: 4px solid #222;
+  border-radius: 12px;
+  padding: 24px;
+  width: min(400px, 90vw);
+}
+
+.modal-box h2 {
+  font-family: 'Jua', sans-serif;
+  margin-bottom: 16px;
+}
+
+.modal-box label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.9em;
+}
+
+.modal-box input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.modal-note {
+  font-size: 0.78em;
+  color: #888;
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.modal-wide { width: min(520px, 94vw); max-height: 90vh; overflow-y: auto; }
+
+.modal-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 2px dashed #ccc;
+  padding-bottom: 8px;
+}
+
+.tab-btn {
+  font-family: 'Jua', sans-serif;
+  padding: 6px 14px;
+  border: 2px solid #ccc;
+  border-radius: 8px 8px 0 0;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.tab-btn.active {
+  background: var(--tab-blue);
+  color: #fff;
+  border-color: var(--tab-blue-deep);
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.modal-box select {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.hint { font-size: 0.8em; color: #999; font-weight: normal; }
+
+/* ===== SOOP 연동 ===== */
+#soopChip {
+  position: fixed;
+  left: 14px;
+  top: 14px;
+  z-index: 95;
+  background: rgba(20,20,25,.78);
+  color: #ddd;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+#soopChip .dot { font-size: 11px; color: #888; }
+#soopChip.on .dot { color: #4ade80; }
+#soopChip.connecting .dot { color: #ffc44d; }
+
+#creditList {
+  position: fixed;
+  left: 14px;
+  top: 56px;
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 280px;
+}
+
+.credit-row {
+  background: rgba(20,20,25,.78);
+  color: #ffd;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.credit-row b { font-family: 'Jua', sans-serif; color: var(--star-yellow); }
+
+.credit-x {
+  margin-left: auto;
+  border: none;
+  background: none;
+  color: #f87171;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#soopToast {
+  position: fixed;
+  left: 50%;
+  top: 10%;
+  transform: translateX(-50%) translateY(-20px);
+  z-index: 120;
+  background: var(--sign-red);
+  color: #fff;
+  font-family: 'Jua', sans-serif;
+  font-size: clamp(16px, 3vh, 22px);
+  padding: 12px 22px;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+}
+
+#soopToast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#soopToast.ok { background: var(--tab-blue); }
+
+.soop-back {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(0,0,0,.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.soop-back.on { display: flex; }
+
+.soop-panel {
+  background: #fff;
+  border-radius: 14px;
+  width: min(420px, 92vw);
+  padding: 24px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.5);
+}
+
+.soop-panel h2 { font-family: 'Jua', sans-serif; margin-bottom: 12px; }
+
+.soop-status-inline {
+  font-size: 0.85em;
+  color: #555;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.chk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.chk-row label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 0;
+}
+
+.chk-row input { width: auto; display: inline; margin: 0; }
+
+.adv-details { margin: 10px 0; font-size: 0.85em; color: #666; }
+.adv-details summary { cursor: pointer; user-select: none; }
+
+.soop-connect-btn { width: 100%; margin-top: 8px; }
+.soop-connect-btn.stop { background: var(--sign-red) !important; border-color: #a22 !important; }
+
+.result-sub {
+  color: rgba(255,255,255,.8);
+  font-size: 0.95em;
+  margin-bottom: 12px;
+}
+
+/* ===== 커스텀 카드 업로드 ===== */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-preview {
+  width: 100%;
+  height: 140px;
+  border: 3px dashed #bbb;
+  border-radius: 10px;
+  background: #f9f9f9 center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+.custom-card-list { margin-top: 16px; }
+
+.custom-card-list h3 {
+  font-family: 'Jua', sans-serif;
+  font-size: 1em;
+  margin-bottom: 8px;
+}
+
+.custom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 0.85em;
+}
+
+.custom-row img {
+  width: 40px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.btn-del {
+  margin-left: auto;
+  background: #fee;
+  border: 1px solid #faa;
+  color: #c33;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+
+.empty-msg { font-size: 0.85em; color: #999; }
+
+.album-slot .slot-custom {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  color: var(--star-yellow);
+  font-size: 0.7em;
+  text-shadow: 0 1px 2px rgba(0,0,0,.5);
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 500px) {
+  .pokemon-card { width: 160px; }
+  .result-cards .pokemon-card { width: 110px; }
+  .reveal-wrap .pokemon-card { width: 200px; }
+  .pack { width: 130px; height: 182px; }
+}
