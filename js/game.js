@@ -198,14 +198,11 @@
     const el = document.createElement('div');
     el.className = 'pokemon-card';
     if (card.holo || card.rarity === 'UR' || card.rarity === 'SR') el.classList.add('holo');
-    if (card.rarity === 'UR') el.classList.add('sar-frame', 'flash-ur');
+    if (card.rarity === 'UR') el.classList.add('sar-frame', 'flash-ur', 'king-card');
     if (card.rarity === 'SR') el.classList.add('flash-sr');
 
     const inner = document.createElement('div');
-    inner.className = 'card-inner';
-
-    const back = document.createElement('div');
-    back.className = 'card-back';
+    inner.className = 'card-inner card-inner-front';
 
     const front = document.createElement('div');
     front.className = `card-front sar-card rarity-${card.rarity || 'N'}`;
@@ -225,10 +222,8 @@
       };
     }
 
-    inner.appendChild(back);
     inner.appendChild(front);
     el.appendChild(inner);
-    inner.style.transform = 'rotateY(180deg)';
 
     return el;
   }

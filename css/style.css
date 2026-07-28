@@ -316,12 +316,25 @@ html, body {
 }
 
 .pokemon-card.sar-frame {
-  padding: 3px;
+  padding: 4px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #D4AF37, #FFD700, #B8860B, #8B0000, #D4AF37);
+  background: linear-gradient(135deg, #FFD700, #FFF4B8, #D4AF37, #FFD700, #B8860B);
   background-size: 300% 300%;
-  animation: sarBorder 5s ease infinite;
-  box-shadow: 0 0 24px rgba(212, 175, 55, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: sarBorder 4s ease infinite;
+  box-shadow: 0 0 28px rgba(255, 215, 0, 0.65), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.pokemon-card.king-card.sar-frame {
+  animation: sarBorder 3s ease infinite, kingGlow 1.4s ease-in-out infinite alternate;
+  box-shadow:
+    0 0 32px rgba(255, 215, 0, 0.85),
+    0 0 64px rgba(255, 180, 0, 0.45),
+    0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes kingGlow {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.12); }
 }
 
 .pokemon-card.sar-frame .card-inner {
@@ -342,12 +355,24 @@ html, body {
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.card-inner-front {
+  transform: none;
+}
+
 .card-front, .card-back {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
   border-radius: 14px;
   overflow: hidden;
+}
+
+.card-inner-front .card-front {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  transform: none;
 }
 
 .card-back {
@@ -371,7 +396,6 @@ html, body {
 }
 
 .card-front.sar-card {
-  transform: rotateY(180deg);
   background: #0a1628;
   border: 3px solid rgba(255, 255, 255, 0.35);
   padding: 0;
@@ -383,7 +407,10 @@ html, body {
 .card-front.rarity-BR { border-color: rgba(85, 139, 47, 0.85); box-shadow: 0 0 12px rgba(85, 139, 47, 0.35); }
 .card-front.rarity-R { border-color: rgba(41, 182, 246, 0.85); box-shadow: 0 0 14px rgba(41,182,246,.35); }
 .card-front.rarity-SR { border-color: rgba(171, 71, 188, 0.9); box-shadow: 0 0 18px rgba(171,71,188,.45); }
-.card-front.rarity-UR { border-color: rgba(255, 215, 0, 0.85); }
+.card-front.rarity-UR {
+  border-color: #FFD700;
+  box-shadow: inset 0 0 24px rgba(255, 215, 0, 0.25), 0 0 16px rgba(255, 215, 0, 0.35);
+}
 .card-front.rarity-MISS {
   border-color: #999;
   background: linear-gradient(165deg, #eee, #ddd);
@@ -442,6 +469,7 @@ html, body {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: linear-gradient(125deg,
     transparent 20%,
     rgba(255,255,255,.12) 35%,
@@ -451,6 +479,40 @@ html, body {
   mix-blend-mode: overlay;
   animation: holoShift 3s ease-in-out infinite;
   pointer-events: none;
+}
+
+.pokemon-card.king-card .card-fullart.holo-art::after {
+  background: linear-gradient(125deg,
+    transparent 15%,
+    rgba(255, 215, 0, 0.4) 28%,
+    rgba(255, 120, 220, 0.32) 42%,
+    rgba(120, 220, 255, 0.32) 58%,
+    rgba(255, 215, 0, 0.4) 72%,
+    transparent 88%);
+  background-size: 280% 280%;
+  mix-blend-mode: color-dodge;
+  animation: kingHolo 2.2s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+.pokemon-card.king-card .card-fullart.holo-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    118deg,
+    transparent 0 7px,
+    rgba(255, 255, 255, 0.05) 7px 9px
+  );
+  animation: holoShift 3.5s linear infinite;
+  opacity: 0.55;
+}
+
+@keyframes kingHolo {
+  0%, 100% { background-position: 0% 50%; opacity: 0.8; }
+  50% { background-position: 100% 50%; opacity: 1; }
 }
 
 @keyframes holoShift {
@@ -792,6 +854,12 @@ html, body {
   transition: transform 0.15s;
 }
 
+.history-slot.rarity-UR {
+  border: 3px solid #FFD700;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.65), inset 0 0 12px rgba(255, 215, 0, 0.15);
+  background: linear-gradient(165deg, #FFFDE7, #FFF9C4);
+}
+
 .history-slot.rarity-MISS {
   border-style: dashed;
   background: linear-gradient(165deg, #eee, #ddd);
@@ -914,8 +982,8 @@ html, body {
 .result-cards .pokemon-card:nth-child(10) { animation-delay: 1.0s; }
 
 @keyframes cardPop {
-  0% { transform: scale(0) rotateY(180deg); opacity: 0; }
-  100% { transform: scale(1) rotateY(0); opacity: 1; }
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .reset-bar {
@@ -959,9 +1027,9 @@ html, body {
 }
 
 @keyframes revealPop {
-  0% { transform: scale(0.2) rotateY(180deg); }
-  60% { transform: scale(1.1) rotateY(0); }
-  100% { transform: scale(1) rotateY(0); }
+  0% { transform: scale(0.2); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 /* UR/SR 연출 */
