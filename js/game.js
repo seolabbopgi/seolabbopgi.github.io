@@ -93,6 +93,20 @@
     initDeck();
   }
 
+  async function resetHistory() {
+    if (!state.history.length && state.deck.length === CARD_SET_TOTAL) {
+      alert('아직 리셋할 내역이 없어요.');
+      return;
+    }
+    if (!confirm('나온 내역과 덱을 모두 초기화할까요?')) return;
+    resetPackCycle();
+    save();
+    updateUI();
+    await renderHistory();
+    $('#resultStage')?.classList.add('hidden');
+    $('#cardReveal')?.classList.add('hidden');
+  }
+
   function fallbackCardPool() {
     return CARD_POOL.map((c) => ({ ...c }));
   }
@@ -542,6 +556,8 @@
       updateUI();
       save();
     });
+
+    $('#btnReset').addEventListener('click', () => resetHistory());
 
     $('#btnSettings').addEventListener('click', () => {
       renderCustomCardList();
