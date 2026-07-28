@@ -49,6 +49,11 @@ html, body {
 
 /* ===== 헤더 ===== */
 #header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   background:
     radial-gradient(ellipse at 30% 10%, rgba(255,255,255,.15), transparent 55%),
     linear-gradient(135deg, var(--sg-red-deep) 0%, var(--sg-red) 40%, #3d1515 100%);
@@ -59,8 +64,9 @@ html, body {
     0 12px 40px rgba(0,0,0,.6),
     inset 0 0 30px rgba(0,0,0,.25);
   padding: 16px 18px;
-  text-align: center;
 }
+
+.title-box { flex: 1; min-width: 200px; text-align: center; }
 
 .title-box h1 {
   font-family: 'Noto Serif KR', 'Jua', serif;
@@ -215,6 +221,19 @@ html, body {
 }
 
 /* ===== 버튼 ===== */
+.btn small {
+  font-size: 0.72em;
+  opacity: 0.85;
+  font-weight: 400;
+}
+
+.btn.disabled,
+.pack.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .gacha-buttons {
   display: flex;
   gap: 10px;
