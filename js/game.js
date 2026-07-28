@@ -69,7 +69,7 @@
         ? data.history.filter((h) => {
           if (h.rarity === 'MISS') return true;
           const id = String(h.id);
-          return id.startsWith('custom-') || id.startsWith('seola-');
+          return id.startsWith('custom-') || id.startsWith('seola-') || id.startsWith('shared-');
         }).map(compactHistoryEntry)
         : [];
       state.soundOn = data.soundOn ?? true;
@@ -469,19 +469,20 @@
   async function renderCustomCardList() {
     const list = $('#customCardList');
     if (!list) return;
-    const custom = loadCustomCards();
-    list.innerHTML = custom.length
-      ? '<h3>추가된 카드</h3>'
-      : '<p class="empty-msg">아직 커스텀 카드가 없어요.</p>';
+    const cards = getManagedCards();
+    list.innerHTML = cards.length
+      ? '<h3>등록된 카드</h3><p class="empty-msg shared-note">🌐 표시 = 모든 방문자 공통 · 💾 = 이 브라우저만</p>'
+      : '<p class="empty-msg">아직 카드가 없어요. 아래에서 추가하거나 data/shared-cards.json 을 수정하세요.</p>';
 
-    for (const card of custom) {
+    for (const card of cards) {
       const row = document.createElement('div');
       row.className = 'custom-row';
       const imgSrc = await resolveCardImage(card);
+      const tag = card.shared ? '🌐' : '💾';
       row.innerHTML = `
         <img src="${imgSrc || ''}" alt="">
-        <span><b>${esc(getRarityLine(card.rarity))}</b> ${esc(card.name)}</span>
-        <button class="btn-del" data-id="${card.id}">삭제</button>
+        <span>${tag} <b>${esc(getRarityLine(card.rarity))}</b> ${esc(card.name)}</span>
+        ${card.shared ? '' : `<button class="btn-del" data-id="${card.id}">삭제</button>`}
       `;
       list.appendChild(row);
     }
@@ -596,6 +597,7 @@
     bindTabs();
     bindEvents();
 
+    await loadSharedCards();
     await refreshCards();
     updateUI();
     await renderHistory();

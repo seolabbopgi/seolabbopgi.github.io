@@ -1515,6 +1515,19 @@ html, body {
 
 .empty-msg { font-size: 0.85em; color: #999; }
 
+.shared-note {
+  margin: 4px 0 10px;
+  font-size: 0.8em;
+  color: #666;
+}
+
+.modal-note code {
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
 .album-slot .slot-custom {
   position: absolute;
   top: 2px;

@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "id": "shared-king",
+      "name": "유설왕",
+      "stage": "왕",
+      "rarity": "UR",
+      "type": "촉",
+      "hp": 130,
+      "desc": "감히 병사라고 무시하지 마라! 여왕이 강림했다.",
+      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "lord": true,
+      "holo": true,
+      "mark": "왕",
+      "artist": "SeolA",
+      "retreat": 1,
+      "no": "001"
+    },
+    {
+      "id": "shared-grand",
+      "name": "대장군 유설아",
+      "stage": "대장군",
+      "rarity": "SR",
+      "type": "위",
+      "hp": 130,
+      "desc": "대장군의 위엄으로 적군을 압도한다.",
+      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "holo": true,
+      "mark": "대장",
+      "artist": "SeolA",
+      "retreat": 2,
+      "no": "002"
+    },
+    {
+      "id": "shared-general",
+      "name": "장수 유설아",
+      "stage": "장수",
+      "rarity": "R",
+      "type": "촉",
+      "hp": 110,
+      "desc": "전장을 지휘하는 장수, 명랑하게 적진을 향해 뛰어든다.",
+      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "mark": "장",
+      "artist": "SeolA",
+      "retreat": 2,
+      "no": "003"
+    },
+    {
+      "id": "shared-centurion",
+      "name": "백인장 유설아",
+      "stage": "백인장",
+      "rarity": "BR",
+      "type": "오",
+      "hp": 100,
+      "desc": "실제 전장을 지휘하는 백인장으로서 적을 마구마구 벱니다.",
+      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "mark": "백",
+      "artist": "SeolA",
+      "retreat": 1,
+      "no": "004"
+    },
+    {
+      "id": "shared-soldier",
+      "name": "병사 유설아",
+      "stage": "병사",
+      "rarity": "N",
+      "type": "군",
+      "hp": 100,
+      "desc": "무력은 약하지만 용기는 가장한 병사입니다.",
+      "image": "https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png",
+      "artist": "SeolA",
+      "retreat": 1,
+      "no": "005"
+    }
+  ]
+}

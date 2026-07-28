@@ -45,6 +45,24 @@ async function deleteImage(id) {
 
 const CUSTOM_CARDS_KEY = 'yuseola-custom-cards';
 const IMAGE_CACHE = {};
+let SHARED_CARDS = [];
+
+async function loadSharedCards() {
+  try {
+    const ver = document.querySelector('meta[name="site-version"]')?.content || Date.now();
+    const res = await fetch(`data/shared-cards.json?v=${ver}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    SHARED_CARDS = (data.cards || []).filter(isValidPoolCard);
+  } catch (err) {
+    console.warn('loadSharedCards', err);
+    SHARED_CARDS = [];
+  }
+}
+
+function getSharedCards() {
+  return SHARED_CARDS.slice();
+}
 
 function loadCustomCards() {
   try {
@@ -74,13 +92,23 @@ async function resolveCardImage(card) {
   }
 }
 
-/** 기본 5장 + 커스텀(같은 등급은 커스텀이 우선) */
+/** 기본 5장 + 공유 카드(JSON) + 브라우저 커스텀(같은 등급은 나중 것이 우선) */
 function getActiveCardPool() {
-  const custom = loadCustomCards().filter(isValidPoolCard);
+  const local = loadCustomCards().filter(isValidPoolCard);
   const byRarity = {};
   CARD_POOL.forEach((c) => { byRarity[c.rarity] = c; });
-  custom.forEach((c) => { byRarity[c.rarity] = c; });
+  SHARED_CARDS.forEach((c) => { byRarity[c.rarity] = c; });
+  local.forEach((c) => { byRarity[c.rarity] = c; });
   return Object.values(byRarity);
+}
+
+function getManagedCards() {
+  const byId = {};
+  SHARED_CARDS.forEach((c) => { byId[c.id] = { ...c, shared: true }; });
+  loadCustomCards().filter(isValidPoolCard).forEach((c) => {
+    byId[c.id] = { ...c, shared: false };
+  });
+  return Object.values(byId);
 }
 
 async function getAllCardsResolved() {
