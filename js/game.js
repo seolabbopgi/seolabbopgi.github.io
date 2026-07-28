@@ -3,13 +3,10 @@
 
   const STORAGE_KEY = 'yuseola-gacha-save';
   const HISTORY_LIMIT = 300;
-  const START_COINS = 2000;
-  const PULL_COSTS = { 1: 100, 10: 950, 20: 1800 };
 
   const state = {
     history: [],
     deck: [],
-    coins: START_COINS,
     soundOn: true,
     pulling: false,
     resolvedCards: [],
@@ -31,15 +28,10 @@
     return { ...rest, image };
   }
 
-  function getPullCost(count) {
-    return PULL_COSTS[count] ?? count * PULL_COSTS[1];
-  }
-
   function save() {
     const payload = JSON.stringify({
       history: state.history.map(compactHistoryEntry),
       deck: state.deck,
-      coins: state.coins,
       soundOn: state.soundOn,
     });
 
@@ -56,7 +48,6 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           history: state.history.map(compactHistoryEntry),
           deck: state.deck,
-          coins: state.coins,
           soundOn: state.soundOn,
         }));
         return;
@@ -71,7 +62,6 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
         state.deck = buildFreshDeck();
-        state.coins = START_COINS;
         return;
       }
       const data = JSON.parse(raw);
@@ -83,8 +73,6 @@
         }).map(compactHistoryEntry)
         : [];
       state.soundOn = data.soundOn ?? true;
-      state.coins = Number.isFinite(data.coins) ? data.coins : START_COINS;
-      if (state.coins === 1000) state.coins = START_COINS;
       if (Array.isArray(data.deck) && data.deck.length) {
         state.deck = data.deck;
       } else {
@@ -122,17 +110,6 @@
 
   function updateUI() {
     $('#btnSound').textContent = state.soundOn ? '🔊' : '🔇';
-    const coinEl = $('#coinCount');
-    if (coinEl) coinEl.textContent = String(state.coins);
-
-    const can1 = state.coins >= PULL_COSTS[1];
-    const can10 = state.coins >= PULL_COSTS[10];
-    const can20 = state.coins >= PULL_COSTS[20];
-    $('#btnSingle')?.classList.toggle('disabled', !can1);
-    $('#btnTen')?.classList.toggle('disabled', !can10);
-    $('#btnTwenty')?.classList.toggle('disabled', !can20);
-    $('#pack')?.classList.toggle('disabled', !can1);
-
     const countEl = $('#historyCount');
     if (countEl) {
       if (!state.history.length && state.deck.length === CARD_SET_TOTAL) {
@@ -339,8 +316,6 @@
   async function doGacha(count, { donor = '' } = {}) {
     if (state.pulling) return false;
 
-    const cost = donor ? 0 : getPullCost(count);
-
     await refreshCards();
     if (!state.resolvedCards.length) {
       alert('뽑기 카드를 불러오지 못했습니다. 설정에서 카드를 추가하거나, 잠시 후 다시 시도해 주세요.');
@@ -350,21 +325,11 @@
       alert('100장을 모두 뽑았습니다. 🔄 리셋 후 다시 뽑을 수 있어요.');
       return false;
     }
-    if (cost > 0 && state.coins < cost) {
-      alert(`코인이 부족합니다. (필요: ${cost}, 보유: ${state.coins})`);
-      return false;
-    }
 
     state.pulling = true;
     const pack = $('#pack');
 
     try {
-      if (cost > 0) {
-        state.coins -= cost;
-        save();
-        updateUI();
-      }
-
       pack?.classList.add('shaking');
       playSound('pull');
       Sfx.packOpen();
@@ -377,11 +342,6 @@
 
       const results = pull(count);
       if (!results.length) {
-        if (cost > 0) {
-          state.coins += cost;
-          save();
-          updateUI();
-        }
         alert('100장을 모두 뽑았습니다. 🔄 리셋 후 다시 뽑을 수 있어요.');
         return false;
       }
@@ -408,11 +368,6 @@
       return true;
     } catch (err) {
       console.error('doGacha', err);
-      if (cost > 0) {
-        state.coins += cost;
-        save();
-        updateUI();
-      }
       alert('뽑기 중 오류가 발생했습니다. 다시 시도해 주세요.');
       return false;
     } finally {
