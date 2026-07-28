@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="site-version" content="20260728-3">
-  <title>츄르단 카드뽑기 — 유설아 컬렉션</title>
+  <meta name="site-version" content="20260728-4">
+  <title>삼국지 유설아 카드뽑기</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;700;900&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -22,8 +22,8 @@
   <div id="app">
     <header id="header">
       <div class="title-box">
-        <h1><span class="blue">츄르</span><span class="red">단</span> 카드뽑기</h1>
-        <p class="subtitle">유설아♡ 포켓몬 카드 컬렉션</p>
+        <h1><span class="gold">삼국지</span> <span class="red">유설아</span> 카드뽑기</h1>
+        <p class="subtitle">유설아♡ 삼국지 장수 카드 컬렉션</p>
       </div>
       <div class="stats-box">
         <div class="stat"><span class="label">보유 코인</span><span id="coinCount" class="value">1000</span></div>
@@ -37,31 +37,31 @@
           <div id="pack" class="pack" tabindex="0" role="button" aria-label="카드팩 열기">
             <div class="pack-front">
               <div class="pack-shine"></div>
-              <span class="pack-logo">♡</span>
+              <span class="pack-logo">將</span>
               <span class="pack-name">유설아</span>
-              <span class="pack-sub">SPECIAL PACK</span>
+              <span class="pack-sub">명장 봉인</span>
             </div>
           </div>
           <p class="pack-hint">팩 클릭 또는 버튼으로 뽑기 · 후원자는 채팅 <strong>1 / 10 / 20</strong></p>
         </div>
 
         <div class="gacha-buttons">
-          <button id="btnSingle" class="btn btn-primary">🎴 1뽑 <small>(100)</small></button>
-          <button id="btnTen" class="btn btn-accent">🎲 10뽑 <small>(900)</small></button>
-          <button id="btnTwenty" class="btn btn-gold">🎰 20뽑 <small>(1700)</small></button>
+          <button id="btnSingle" class="btn btn-primary">⚔ 1뽑 <small>(100)</small></button>
+          <button id="btnTen" class="btn btn-accent">🏯 10뽑 <small>(900)</small></button>
+          <button id="btnTwenty" class="btn btn-gold">👑 20뽑 <small>(1700)</small></button>
         </div>
 
         <div class="rate-info">
-          <span class="rate ur">RR ★★ 1%</span>
-          <span class="rate sr">R ★ 5%</span>
-          <span class="rate r">U ◆ 15%</span>
-          <span class="rate n">C ● 50%</span>
+          <span class="rate ur">금 ★★ 1%</span>
+          <span class="rate sr">자 ★ 5%</span>
+          <span class="rate r">청 ◆ 15%</span>
+          <span class="rate n">백 ● 50%</span>
           <span class="rate miss">꽝 29%</span>
         </div>
       </section>
 
       <section id="albumZone" class="panel">
-        <h2 class="panel-title">📖 카드 도감</h2>
+        <h2 class="panel-title">📜 장수 도감</h2>
         <div id="albumGrid" class="album-grid"></div>
       </section>
     </main>
@@ -115,14 +115,14 @@
           <label>부제<input type="text" id="cardSubtitle" placeholder="예: 생일 축하" maxlength="20"></label>
           <label>등급
             <select id="cardRarity">
-              <option value="N">N — 일반</option>
-              <option value="R" selected>R — 고급</option>
-              <option value="SR">SR — 희귀</option>
-              <option value="UR">UR — 전설</option>
+              <option value="N">백 — 일반</option>
+              <option value="R" selected>청 — 고급</option>
+              <option value="SR">자 — 희귀</option>
+              <option value="UR">금 — 명장</option>
             </select>
           </label>
-          <label>공격 이름<input type="text" id="cardAttack" value="특별 공격"></label>
-          <label>데미지<input type="number" id="cardDamage" value="50" min="0" max="999"></label>
+          <label>전법 이름<input type="text" id="cardAttack" value="특별 전법"></label>
+          <label>피해<input type="number" id="cardDamage" value="50" min="0" max="999"></label>
           <label>설명<input type="text" id="cardDesc" placeholder="카드 설명"></label>
           <button type="submit" class="btn btn-primary">카드 추가</button>
         </form>

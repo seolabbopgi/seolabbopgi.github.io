@@ -1,6 +1,6 @@
 # seolabbopgi
 
-SOOP 스트리머 **유설아♡** 테마의 포켓몬 TCG 스타일 카드 뽑기 게임.
+SOOP 스트리머 **유설아♡** 테마의 **삼국지** 장수 카드 뽑기 게임.
 
 **사이트 주소:** https://seolabbopgi.github.io
 
