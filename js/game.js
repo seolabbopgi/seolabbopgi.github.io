@@ -54,6 +54,7 @@
     el.className = 'pokemon-card';
     if (card.holo) el.classList.add('holo');
     if (card.rarity === 'UR') el.classList.add('flash-ur');
+    if (card.rarity === 'SR') el.classList.add('flash-sr');
 
     const inner = document.createElement('div');
     inner.className = 'card-inner';
@@ -194,20 +195,8 @@
 
   function playSound(type) {
     if (!state.soundOn) return;
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      const freqs = { pull: 440, ur: 880, sr: 660, r: 550, n: 330, miss: 220 };
-      osc.frequency.value = freqs[type] ?? 440;
-      osc.type = type === 'ur' ? 'square' : 'sine';
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.3);
-    } catch (_) { /* ignore */ }
+    const map = { pull: 'pull', ur: 'ur', sr: 'sr', r: 'r', n: 'n', miss: 'miss' };
+    Sfx.play(map[type] ?? 'pull');
   }
 
   async function doGacha(count, cost, { free = false, donor = '' } = {}) {
@@ -229,10 +218,11 @@
     const pack = $('#pack');
     pack.classList.add('shaking');
     playSound('pull');
+    Sfx.packOpen();
     await sleep(600);
     pack.classList.remove('shaking');
     pack.classList.add('opening');
-    playSound('pull');
+    Sfx.packOpen();
     await sleep(800);
     pack.classList.remove('opening');
 
@@ -274,12 +264,21 @@
     });
   }
 
+  function flashScreen(rarity) {
+    const el = document.createElement('div');
+    el.className = `screen-flash flash-${rarity}`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 600);
+  }
+
   function showSingleReveal(card, sub = '') {
     return new Promise((resolve) => {
       const stage = $('#cardReveal');
       const wrap = $('#revealCard');
       wrap.innerHTML = '';
       wrap.appendChild(createCardElement(card));
+      if (card.rarity === 'UR') flashScreen('ur');
+      else if (card.rarity === 'SR') flashScreen('sr');
       $('#revealSub').textContent = sub;
       stage.classList.remove('hidden');
       const close = () => {
