@@ -92,12 +92,8 @@ function buildCardFrontHTML(card, totalCards = CARD_SET_TOTAL) {
     return `<div class="card-miss-body"><span class="card-miss-text">꽝</span><p>다음 전투에!</p></div>`;
   }
 
-  const stage = getStage(card);
   const typeE = TYPE_ENERGY[card.type] || 'bing';
   const lord = isLordCard(card);
-  const mark = card.mark || RARITY_MARK[card.rarity] || '';
-  const artist = card.artist || 'SeolA';
-  const no = `${card.no || '?'}/${String(totalCards).padStart(3, '0')}`;
   const holo = card.holo || card.rarity === 'UR' || card.rarity === 'SR';
   const description = getCardDescription(card);
 
@@ -113,7 +109,6 @@ function buildCardFrontHTML(card, totalCards = CARD_SET_TOTAL) {
     </div>
     <div class="card-ui">
       <div class="card-top-bar">
-        <span class="stage-pill">${escHtml(stage)}</span>
         <span class="card-name-ex">${nameHtml}</span>
         <span class="hp-group">
           무력 <b>${card.hp}</b>
@@ -122,10 +117,6 @@ function buildCardFrontHTML(card, totalCards = CARD_SET_TOTAL) {
       </div>
       <div class="card-desc-box">
         <p class="card-desc-text">${escHtml(description || '—')}</p>
-      </div>
-      <div class="card-meta">
-        <span class="illus">Illus. ${escHtml(artist)}</span>
-        <span class="card-reg">${no}${mark ? ` ${mark}` : ''}</span>
       </div>
     </div>`;
 }
