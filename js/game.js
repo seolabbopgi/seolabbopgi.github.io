@@ -205,16 +205,18 @@
   async function normalizeCardForDisplay(card) {
     const image = await resolveHistoryImage(card);
     const poolCard = state.resolvedCards.find((c) => c.id === card.id);
-    return {
+    const rarity = card.rarity || poolCard?.rarity;
+    return applyRarityHp({
       ...(poolCard || {}),
       ...card,
       name: card.name || poolCard?.name || '유설아',
       type: card.type || poolCard?.type || '군',
-      hp: card.hp ?? poolCard?.hp ?? 70,
+      rarity,
+      hp: RARITY_HP[rarity] ?? card.hp ?? poolCard?.hp ?? 70,
       moves: card.moves?.length ? card.moves : poolCard?.moves,
       desc: card.desc || poolCard?.desc || getCardDescription(card),
       image,
-    };
+    });
   }
 
   function addToHistory(cards, donor = '') {

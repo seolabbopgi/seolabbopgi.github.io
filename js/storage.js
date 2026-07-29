@@ -92,14 +92,14 @@ async function resolveCardImage(card) {
   }
 }
 
-/** 기본 5장 + 공유 카드(JSON) + 브라우저 커스텀(같은 등급은 나중 것이 우선) */
+/** 기본 카드 + 공유 카드(JSON) + 브라우저 커스텀(같은 등급은 나중 것이 우선) */
 function getActiveCardPool() {
   const local = loadCustomCards().filter(isValidPoolCard);
   const byRarity = {};
   CARD_POOL.forEach((c) => { byRarity[c.rarity] = c; });
   SHARED_CARDS.forEach((c) => { byRarity[c.rarity] = c; });
   local.forEach((c) => { byRarity[c.rarity] = c; });
-  return Object.values(byRarity);
+  return Object.values(byRarity).map(applyRarityHp);
 }
 
 function getManagedCards() {
@@ -116,9 +116,9 @@ async function getAllCardsResolved() {
   const resolved = await Promise.all(pool.map(async (c) => {
     try {
       const image = await resolveCardImage(c);
-      return { ...c, image: image ?? c.image ?? '' };
+      return applyRarityHp({ ...c, image: image ?? c.image ?? '' });
     } catch {
-      return { ...c, image: c.image ?? '' };
+      return applyRarityHp({ ...c, image: c.image ?? '' });
     }
   }));
   return resolved.filter(isValidPoolCard);
@@ -147,7 +147,7 @@ async function addCustomCard(meta, file) {
     stage: STAGE_LABEL[meta.rarity] || '병사',
     rarity: meta.rarity || 'R',
     type: meta.type || '군',
-    hp: +meta.hp || 100,
+    hp: RARITY_HP[meta.rarity] ?? (+meta.hp || 100),
     desc: meta.desc || '직접 추가한 카드',
     moves: [{
       energy: [TYPE_ENERGY[meta.type || '군'] || 'bing', 'bing'],

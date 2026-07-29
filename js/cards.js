@@ -23,6 +23,7 @@ const RARITY_REWARD = {
   C: '윙크',
   MISS: '',
 };
+const RARITY_HP = { UR: 999, SR: 777, R: 500, BR: 300, N: 150, C: 50, MISS: 0 };
 const CARD_SET_TOTAL = 100;
 const DECK_VERSION = 3;
 
@@ -95,6 +96,12 @@ function getCardDescription(card) {
   if (card.desc) return card.desc;
   const descs = getMoves(card).map((m) => m.desc).filter(Boolean);
   return descs.join(' ') || '';
+}
+
+function applyRarityHp(card) {
+  if (!card) return card;
+  const hp = RARITY_HP[card.rarity];
+  return hp != null ? { ...card, hp } : card;
 }
 
 function buildCardFrontHTML(card, totalCards = CARD_SET_TOTAL) {
