@@ -139,27 +139,27 @@ const CARD_POOL = [
     image: 'assets/cards/citizen.png', no: '000', retreat: 1,
   },
   {
-    id: 'seola-soldier', name: '병사 유설아', stage: '병사', rarity: 'N', type: '군', hp: 70,
+    id: 'seola-soldier', name: '병사 유설아', stage: '병사', rarity: 'N', type: '군', hp: 150,
     moves: [{ energy: ['bing'], name: '투창', desc: '병사 유설아의 기본 공격.', damage: 30 }],
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg', no: '001', retreat: 1,
   },
   {
-    id: 'seola-centurion', name: '백인장 유설아', stage: '백인장', rarity: 'BR', type: '오', hp: 80,
+    id: 'seola-centurion', name: '백인장 유설아', stage: '백인장', rarity: 'BR', type: '오', hp: 300,
     moves: [{ energy: ['bing', 'bing'], name: '기습', desc: '백인장의 날카로운 일격.', damage: 35 }],
     image: 'https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png', no: '002', mark: '백', retreat: 1,
   },
   {
-    id: 'seola-general', name: '장수 유설아', stage: '장수', rarity: 'R', type: '촉', hp: 110,
+    id: 'seola-general', name: '장수 유설아', stage: '장수', rarity: 'R', type: '촉', hp: 500,
     moves: [{ energy: ['shu', 'bing'], name: '돌격', desc: '장수의 강력한 돌격.', damage: 55 }],
     image: 'https://profile.img.sooplive.co.kr/LOGO/ye/yeveee/yeveee.jpg', no: '003', mark: '장', retreat: 2,
   },
   {
-    id: 'seola-grand', name: '대장군 유설아', stage: '대장군', rarity: 'SR', type: '위', hp: 130, holo: true,
+    id: 'seola-grand', name: '대장군 유설아', stage: '대장군', rarity: 'SR', type: '위', hp: 777, holo: true,
     moves: [{ energy: ['wei', 'bing'], name: '츄르단 하트', desc: '대장군의 필살 전법.', damage: 70 }],
     image: 'https://d1b4su7rx1qs3y.cloudfront.net/uploads/images/JYgjMHUbLMWQ.png', no: '004', mark: '대장', retreat: 2,
   },
   {
-    id: 'seola-king', name: '유설왕', stage: '왕', rarity: 'UR', type: '촉', hp: 130, lord: true, holo: true,
+    id: 'seola-king', name: '유설왕', stage: '왕', rarity: 'UR', type: '촉', hp: 999, lord: true, holo: true,
     moves: [
       { energy: ['bing', 'bing'], name: '키키', desc: '귀여운 눈빛으로 적군을 녹인다.', damage: 50 },
       { energy: ['shu', 'bing'], name: '2인자의 위엄', desc: '2인방송의 케미로 공격한다.', damage: 30 },
