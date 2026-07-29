@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="site-version" content="20260729-28">
+  <meta name="site-version" content="20260730-01">
   <title>삼국지 유설아 카드뽑기</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;700;900&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260729-28">
+  <link rel="stylesheet" href="css/style.css?v=20260730-01">
 </head>
-<body>
+<body class="broadcast">
+  <div id="broadcastRoot">
   <!-- SOOP 연동 칩 -->
   <div id="soopChip" title="숲 연동 설정">
     <span class="dot">●</span>
@@ -25,6 +26,10 @@
         <h1><span class="gold">삼국지</span> <span class="red">유설아</span> 카드뽑기</h1>
         <p class="subtitle">유설아♡ 삼국지 장수 카드 컬렉션</p>
       </div>
+      <div class="deck-badge" title="남은 카드">
+        <span class="deck-badge-label">남은 카드</span>
+        <strong id="deckRemain">100 / 100</strong>
+      </div>
     </header>
 
     <main id="main">
@@ -38,7 +43,7 @@
               <span class="pack-sub">명장 봉인</span>
             </div>
           </div>
-          <p class="pack-hint">팩 클릭 또는 버튼으로 뽑기 · 후원자는 채팅 <strong>1 / 10 / 20</strong></p>
+          <p class="pack-hint">팩·버튼으로 뽑기 · 채팅 <strong>1 / 10 / 20</strong></p>
         </div>
 
         <div class="gacha-buttons">
@@ -56,12 +61,13 @@
           <span class="rate c" data-rarity="C">시민 ○ 윙크 <b class="rate-count">30/30</b></span>
           <span class="rate miss" data-rarity="MISS">꽝 <b class="rate-count">36/36</b></span>
         </div>
-        <p class="deck-note">총 100장 덱 · 뽑으면 줄어듦 · 다 뽑으면 자동 초기화</p>
       </section>
 
       <section id="historyZone" class="panel">
-        <h2 class="panel-title">📋 나온 내역</h2>
-        <p id="historyCount" class="history-count"></p>
+        <div class="history-head">
+          <h2 class="panel-title">📋 나온 내역</h2>
+          <p id="historyCount" class="history-count"></p>
+        </div>
         <div id="historyGrid" class="history-grid"></div>
       </section>
     </main>
@@ -73,7 +79,7 @@
     </footer>
   </div>
 
-  <!-- 뽑기 결과 -->
+  <!-- 뽑기 결과 (위젯 안 오버레이) -->
   <div id="resultStage" class="stage hidden">
     <div class="dim"></div>
     <div class="result-content">
@@ -95,6 +101,7 @@
       <p class="tap-hint">화면을 누르면 닫혀요</p>
     </div>
   </div>
+  </div><!-- /broadcastRoot -->
 
   <!-- 설정 모달 (탭) -->
   <div id="settingsModal" class="modal hidden">
@@ -107,7 +114,7 @@
 
       <div id="tabGeneral" class="tab-panel active">
         <h2>⚙ 일반 설정</h2>
-        <p class="modal-note">1뽑 · 10뽑 · 20뽑 버튼으로 뽑기. 100장 다 뽑으면 덱이 자동 초기화됩니다.</p>
+        <p class="modal-note">1뽑 · 10뽑 · 20뽑 버튼으로 뽑기. 100장 다 뽑으면 덱이 자동 초기화됩니다.<br>OBS 브라우저 소스 권장 크기: <strong>540 × 900</strong></p>
       </div>
 
       <div id="tabCards" class="tab-panel">
@@ -180,10 +187,10 @@
     </div>
   </div>
 
-  <script src="js/cards.js?v=20260729-28"></script>
-  <script src="js/storage.js?v=20260729-28"></script>
-  <script src="js/sfx.js?v=20260729-28"></script>
-  <script src="js/soop.js?v=20260729-28"></script>
-  <script src="js/game.js?v=20260729-28"></script>
+  <script src="js/cards.js?v=20260730-01"></script>
+  <script src="js/storage.js?v=20260730-01"></script>
+  <script src="js/sfx.js?v=20260730-01"></script>
+  <script src="js/soop.js?v=20260730-01"></script>
+  <script src="js/game.js?v=20260730-01"></script>
 </body>
 </html>

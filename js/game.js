@@ -152,12 +152,16 @@
 
   function updateUI() {
     $('#btnSound').textContent = state.soundOn ? '🔊' : '🔇';
+    const remainEl = $('#deckRemain');
+    if (remainEl) {
+      remainEl.textContent = `${state.deck.length} / ${CARD_SET_TOTAL}`;
+    }
     const countEl = $('#historyCount');
     if (countEl) {
       if (!state.history.length && state.deck.length === CARD_SET_TOTAL) {
-        countEl.textContent = `100장 덱 · 아직 뽑은 카드가 없어요`;
+        countEl.textContent = `아직 뽑은 카드 없음`;
       } else if (state.history.length) {
-        countEl.textContent = `총 ${state.history.length}장 · 남은 ${state.deck.length}장`;
+        countEl.textContent = `${state.history.length}장 뽑음`;
       } else {
         countEl.textContent = `남은 ${state.deck.length}장`;
       }
@@ -416,7 +420,7 @@
   function flashScreen(rarity) {
     const el = document.createElement('div');
     el.className = `screen-flash flash-${rarity}`;
-    document.body.appendChild(el);
+    ($('#broadcastRoot') || document.body).appendChild(el);
     setTimeout(() => el.remove(), 600);
   }
 
