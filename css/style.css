@@ -1433,20 +1433,7 @@ body.broadcast {
 
 /* ===== SOOP 연동 ===== */
 #soopChip {
-  position: absolute;
-  left: 8px;
-  top: 8px;
-  z-index: 95;
-  background: rgba(20,20,25,.78);
-  color: #ddd;
-  font-size: 11px;
-  padding: 5px 8px;
-  border-radius: 10px;
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
+  display: none !important;
 }
 
 #soopChip .dot { font-size: 11px; color: #888; }
